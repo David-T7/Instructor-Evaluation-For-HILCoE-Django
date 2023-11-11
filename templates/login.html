@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+{% load static %}
+{% block content %}
+<title>Login Page </title>
+
+	<section class="h-100">
+		
+		<div class="container h-100">
+			<div class="row justify-content-sm-center h-100">
+				<div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+					<div class="text-center my-5">
+						<img src="{% static 'images/logo/hilcoelogo.jpg' %}" alt="logo" width="100">
+					</div>
+					<div class="card shadow-lg">
+						<div class="card-body p-5">
+							<h3 class="fw-normal mb-5" style="color: #4835d4;">Sign into your account</h3> 
+							<form  method="POST" >
+								{% csrf_token %}
+								<div class="mb-3">
+									<label class="mb-2 " for="name">Username</label>
+								{% render_field form.username  id="name" type="text" class="form-control" name="username"  %} 	
+								
+								{% for msg in messages%}
+								{% if msg|stringformat:"s" == 'Username doestnot exist' %}
+								<span style="color: red;" >{{msg}}</span>
+								{% endif %}
+								{% endfor %}
+								</div>	
+								
+								<div class="mb-3">
+									<label class="mb-2 " for="password">Password</label>
+								{% render_field form.password1  id="password" type="password" class="form-control" name="password1"  %}
+								
+								{% for msg in messages%}
+								{% if msg|stringformat:"s" == 'Incorrect Password' %}
+								<span style="color: red;" >{{msg}}</span>
+								{% endif %}
+
+								{% endfor %}
+								</div>							
+								<br>
+								
+								<div style="align-self:auto; margin-left: 130px;">
+									<button type="submit" class="btn btn-primary ms-auto">
+										Login
+									</button>
+								</div>
+                                <br>
+								<div style="align-self:auto; margin-left: 100px;">
+									<a href="#">
+										Forgot Password?
+									</a>
+								</div>
+								<br>
+								<div style="align-self:auto; margin-left: 110px;">
+									<a href="{% url 'homepage' %}">Return Home</a>
+								</div>			
+							</form>
+						</div>
+						{% if Role == 'student' %}
+						<div class="card-footer py-3 border-0">
+							<div class="text-center">
+								Don't have an account? <a href="{% url 'register' %}" class="text-dark">Create One</a>
+							</div>
+						</div>
+						{% endif %}
+					</div>
+					<div class="text-center mt-5 text-muted">
+                        <br>
+                        <br>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+{% endblock %}
