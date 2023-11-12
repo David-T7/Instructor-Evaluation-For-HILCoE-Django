@@ -1,0 +1,53 @@
+{% load widget_tweaks %}
+<br>
+<section class="h-100">
+<div class="container h-100">
+        <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+<div class="card shadow-lg">
+    <div class="card-body p-5">
+        <h1 class="fs-4 card-title fw-bold mb-4" style="color: #4835d4;">Edit Account </h1>
+            <form  method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            {% for field in form %} 
+            <div class="mb-3">
+                <label for="formInput#text">{{field.label}}</label>
+                {% render_field field  id="formInput#text"  class="form-control"  %}
+                <span > <h style="color: red;">{{field.errors}}</h></span> 	
+            </div>
+            {% for msg in messages %}
+            {% if msg.tags == 'info' %}
+            <span style="color: blue;" >{{msg}}</span>
+            {% endif %}
+            {% if msg.tags == 'success' %}
+            <span style="color:green;" >{{msg}}</span>
+            {% endif %}
+            {% if msg.tags == 'error' %}
+            <span style="color:red;" >{{msg}}</span>
+            {% endif %}
+
+            {% endfor %}
+            {% endfor %}
+            <div style="align-self:auto; margin-left: 100px;">  
+                <button type="submit" class="btn btn-primary ms-auto">
+                    update
+                </button>
+            </div><br>
+            <div style="align-self:auto; margin-left: 80px;">      
+            {% if sender == 'username' %}
+           
+        <a href="{% url 'editpassword'  %}"><button type="button" class="btn btn-primary btn-sm">ChangePassword</button></a>&nbsp;
+        {% elif sender == 'password'  %}
+        <a href="{% url 'editusername'  %}"><button type="button" class="btn btn-primary btn-sm">ChangeUserName</button></a>&nbsp;
+        {% else %}
+        <a href="{% url 'editpassword'  %}"><button type="button" class="btn btn-primary btn-sm" >ChangePassword</button></a>&nbsp;
+        <a href="{% url 'editusername'  %}"><button type="button" class="btn btn-primary btn-sm" >ChangeUserName</button></a>
+        {% endif %}
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+</div>
+</section>
+<br>

@@ -29,12 +29,9 @@
                         <div class="form-outline">
                         <label class="form-label" for="formInput#text">{{field.label}}</label>
                         {% render_field field  id="name"  class="form-control form-control-lg" %} 
-                        {% if field.label == 'Age' %}
                         {% for msg in messages %}
                          <span style="color: red;" >{{msg}}</span>
-
                         {% endfor %}
-                        {% endif %}    
                        <span > <h style="color: red;">{{field.errors}}</h></span>
                       </div>
                        </div>
@@ -45,7 +42,7 @@
                        <div class="col-md-6 mb-4 pb-2">
                         <div class="form-outline">
                         <label class="form-label" for="formInput#text">{{field.label}}</label>
-                        {% render_field field  id="form-label"  class="form-control form-control-lg" %} 
+                        {% render_field field  id="name"  class="form-control form-control-lg" %} 
                         {% if field.errors != None %}
                         <span > <h style="color:red;">{{field.errors}}</h></span>                      </div>
                         {% endif %}
@@ -57,10 +54,10 @@
                       <button type="submit" class="btn btn-primary ms-auto btn-lg"  style="float: le;margin-left: 50px;" >
                         Register </button>&nbsp;&nbsp;&nbsp;&nbsp;
    
-                         <a href="{% url 'homepage' %}"><button type="submit" class="btn btn-primary ms-auto btn-lg"  style="float: le;margin-left: 50px;" >
+                         <a href="{% url 'homepage' %}">
 
                          Return Home
-                        </button> </a>
+                         </a>
 
 
                   </div>
