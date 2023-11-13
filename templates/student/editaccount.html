@@ -5,7 +5,7 @@
         <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
 <div class="card shadow-lg">
     <div class="card-body p-5">
-        <h1 class="fs-4 card-title fw-bold mb-4" style="color: #4835d4;">Edit Account </h1>
+        <h1 class="fs-4 card-title fw-bold mb-4" style="color:rgb(19, 92, 230)">Edit Account </h1>
             <form  method="POST" enctype="multipart/form-data">
             {% csrf_token %}
             
@@ -29,20 +29,23 @@
             {% endfor %}
             {% endfor %}
             <div style="align-self:auto; margin-left: 100px;">  
-                <button type="submit" class="btn btn-primary ms-auto">
+                <button type="submit" class="btn btn-primary btn-block mb-4">
                     update
                 </button>
             </div><br>
-            <div style="align-self:auto; margin-left: 80px;">      
+            <div style="align-self:auto; margin-left: 75px;">      
             {% if sender == 'username' %}
-           
-        <a href="{% url 'editpassword'  %}"><button type="button" class="btn btn-primary btn-sm">ChangePassword</button></a>&nbsp;
-        {% elif sender == 'password'  %}
-        <a href="{% url 'editusername'  %}"><button type="button" class="btn btn-primary btn-sm">ChangeUserName</button></a>&nbsp;
-        {% else %}
-        <a href="{% url 'editpassword'  %}"><button type="button" class="btn btn-primary btn-sm" >ChangePassword</button></a>&nbsp;
-        <a href="{% url 'editusername'  %}"><button type="button" class="btn btn-primary btn-sm" >ChangeUserName</button></a>
-        {% endif %}
+            <div style="align-self:auto;">
+                <a href="{% url 'editpassword' %}">Change Password</a>
+            </div>
+            {% elif sender == 'password'  %}
+            <div style="align-self:auto;">
+                <a href="{% url 'editusername' %}">Change Username</a>
+            </div>
+           {% else %}
+           <a href="{% url 'editpassword'  %}"><button type="button" class="btn btn-primary btn-sm" >ChangePassword</button></a>&nbsp;
+           <a href="{% url 'editusername'  %}"><button type="button" class="btn btn-primary btn-sm" >ChangeUserName</button></a>
+           {% endif %}
             </div>
         </form>
     </div>

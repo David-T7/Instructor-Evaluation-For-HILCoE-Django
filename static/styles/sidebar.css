@@ -6,7 +6,7 @@
   
   body {
     min-height: 100vh;
-    background-color: #fff;
+    background-color:#f8f9fa;
   }
   
   .side-navbar {
@@ -14,7 +14,7 @@
     height: 100%;
     position: fixed;
     margin-left: -300px;
-    background-color:rgb(53, 53, 245);
+    background-color:rgb(38, 108, 236);
     transition: 0.5s;
   }
   .nav-link:active,
@@ -37,7 +37,7 @@
   }
   
   #menu-btn {
-    background-color: rgb(53, 53, 245);
+    background-color:rgb(38, 108, 236);
     color: #fff;
     margin-left: -62px;
   }
@@ -108,3 +108,6 @@
   .styled-table tbody{
     background-color: white;
   }
+  .bg-light {
+    background-color: rgb(38, 108, 236);;
+}

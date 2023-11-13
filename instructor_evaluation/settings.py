@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'pages',
     'Account',
     'Student',
-    'widget_tweaks'
+    'widget_tweaks',
+    'Instructor',
 ]
 
 MIDDLEWARE = [
