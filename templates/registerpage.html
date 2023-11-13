@@ -12,16 +12,19 @@
             <br>
             <div class="card shadow-lg">
                     <div class="card-body p-5">
-                        <h3 class="fw-normal mb-5" style="color: rgb(19, 92, 230)">Create new account</h3>
+                        <h3 class="fw-normal mb-4" style="color: rgb(19, 92, 230)">Create new account</h3>
 
                         <form method="POST" enctype="multipart/form-data">
                             {% csrf_token %}
                             
                             <div class="row">
                               {% for field in form1 %}
-                                  <div class="col-lg-6 mb-3">
-                                      <label class="mb-2" for="{{ field.id_for_label }}">{{field.label}}</label>
-                                      {% render_field field id=field.id_for_label class="form-control form-control-lg mb-2" %}
+
+                                  <div class="col-lg-6 mb-3 form-floating">
+                                    <div class="form-floating">
+                                      {% render_field field id=field.id_for_label class="form-control form-control-lg mb-2" placeholder=field.label %}
+                                      <label for="floatingPassword">{{field.label}}</label>
+                                    </div>
                                       {% for msg in messages %}
                                           <span style="color: red;">{{msg}}</span>
                                       {% endfor %}
@@ -34,8 +37,10 @@
                               {% for field in form2 %}
                                   {% if field.label != 'Role' %}
                                       <div class="col-lg-6 mb-3">
-                                          <label class="mb-2" for="{{ field.id_for_label }}">{{field.label}}</label>
-                                          {% render_field field id=field.id_for_label class="form-control form-control-lg mb-2" %}
+                                        <div class="form-floating">
+                                            {% render_field field id=field.id_for_label class="form-control form-control-lg mb-2" placeholder=field.label %}
+                                            <label for="floatingPassword">{{field.label}}</label>
+                                          </div>
                                           {% for msg in messages %}
                                               <span style="color: red;">{{msg}}</span>
                                           {% endfor %}
@@ -49,7 +54,7 @@
                                 <button type="submit" class="btn btn-primary w-100 max-width-300">
                                     Register
                                 </button>
-                            </div><br>
+                            </div>
                             <div class="card-footer py-3 border-1">
                                 <div class="text-center">
                                     Already have an account? <a href="{% url 'login' 'student' %}" class="text-dark">Login</a>
@@ -63,7 +68,7 @@
                 </div>
             </div>
         </div>
-    </div><br>
+    </div><br><br>
     </div>
 </section>
 {% endblock %}

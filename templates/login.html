@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 {% load static %}
 {% block content %}
-<title>Login Page </title>
+<title>Login Page</title>
 
 <section class="h-100" style="background-color: rgb(38, 108, 236)">
     <div class="container h-100">
@@ -11,23 +11,28 @@
                 <br>
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
-                        <h3 class="fw-normal mb-5" style="color: rgb(19, 92, 230)">Sign into your account</h3>
+                        <h3 class="fw-normal mb-4" style="color: rgb(19, 92, 230)">Sign into your account</h3>
                         <form method="POST">
                             {% csrf_token %}
                             <div class="mb-3">
-                                <label class="mb-2" for="name">Username</label>
-                                {% render_field form.username id="name" type="text" class="form-control" name="username" %}
+                                <div class="form-floating">
+                                    {% render_field form.username id="name" type="text" class="form-control" placeholder="Username" name="username"%}
+                                    <label for="floatingPassword">Username</label>
+                                </div>
+                                <span><h style="color: red;">{{form.username.errors}}</h></span>
 
                                 {% for msg in messages %}
-                                {% if msg|stringformat:"s" == 'Username doestnot exist' %}
+                                {% if msg|stringformat:"s" == 'Username does not exist' %}
                                 <span style="color: red;">{{msg}}</span>
                                 {% endif %}
                                 {% endfor %}
                             </div>
 
                             <div class="mb-3">
-                                <label class="mb-2" for="password">Password</label>
-                                {% render_field form.password1 id="password" type="password" class="form-control" name="password1" %}
+                                <div class="form-floating">
+                                    {% render_field form.password1 id="password" type="password" class="form-control"  placeholder="Password" name="password1" value=form.field_name.value %}
+                                    <label for="floatingPassword">Password</label>
+                                </div>
 
                                 {% for msg in messages %}
                                 {% if msg|stringformat:"s" == 'Incorrect Password' %}
@@ -41,8 +46,7 @@
                                     Login
                                 </button>
                             </div>
-                            <br>
-                            <div style="align-self:auto; margin-left: 100px;">
+                            <div class="text-center">
                                 <a href="#">
                                     Forgot Password?
                                 </a>
@@ -54,7 +58,7 @@
                                     Don't have an account? <a href="{% url 'register' %}" class="text-dark">Create One</a>
                                 </div>
                             </div>
-							<div class="text-center">
+                            <div class="text-center">
                                 <a href="{% url 'homepage' %}">Return Home</a>
                             </div>
                             </form>
@@ -68,7 +72,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    
 </section>
 
 {% endblock %}

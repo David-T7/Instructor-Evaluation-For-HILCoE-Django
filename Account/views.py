@@ -15,19 +15,22 @@ def Login(request , role):          # function based view for handling user logi
         username = request.POST['username'].lower()      # making sure the user name is in lowercase 
         password = request.POST['password1']
         try:
-            user = authenticate(request=request, username=username, password=password , Role  =role)   # full user authenticaton including role
+            user = authenticate(request=request, username=username, password=password , Role =role)   # full user authenticaton including role
             if user is not None:
                 login(request, user) 
                 if(role.lower() =='student'):
                     return redirect('studnet')  # redircting to other page after login
             else:
                 login(request, user , backend='django.contrib.auth.backends.ModelBackend')
+                
         except:
             try:
+                print("in try")
                 testusername = Account.objects.get(username = username)
                 messages.error(request, 'Incorrect Password')
             except:
-                messages.error(request, 'Username doestnot exist')
+                print("in exception")
+                messages.error(request, 'Username does not exist')
     return render(request, 'login.html',{'Role':role,'form':form})  
 
 
@@ -35,7 +38,7 @@ def Logout(request):
     logred = '/login/' + request.user.Role  # getting the redirection path for every role
     logout(request)
     messages.info(request, 'Successfuly Logged out!')    
-    return redirect(logred)
+    return redirect(logred.lower())
 
 def Userstate(request):  # for getting the state of the user 
     state = request.user
