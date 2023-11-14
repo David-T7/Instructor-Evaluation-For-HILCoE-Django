@@ -20,6 +20,8 @@ def Login(request , role):          # function based view for handling user logi
                 login(request, user) 
                 if(role.lower() =='student'):
                     return redirect('studnet')  # redircting to other page after login
+                elif(role.lower() =='instructor'):
+                    return redirect('instructor')  # redircting to other page after login
             else:
                 login(request, user , backend='django.contrib.auth.backends.ModelBackend')
                 

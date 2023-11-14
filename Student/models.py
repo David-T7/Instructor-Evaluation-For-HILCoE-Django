@@ -9,4 +9,4 @@ class Student(models.Model):
     Department = models.CharField(max_length=20 , null=True , blank=True)
     Batch = models.CharField(max_length=20 , null=True , blank=True)
     def __str__(self):
-        return str(self.Donor_id)
+        return str(self.Student_id)

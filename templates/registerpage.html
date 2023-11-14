@@ -25,9 +25,12 @@
                                       {% render_field field id=field.id_for_label class="form-control form-control-lg mb-2" placeholder=field.label %}
                                       <label for="floatingPassword">{{field.label}}</label>
                                     </div>
+                                    {% if field.label == 'Student id'%}
                                       {% for msg in messages %}
                                           <span style="color: red;">{{msg}}</span>
+                                          
                                       {% endfor %}
+                                      {% endif %}
                                       <span><h style="color: red;">{{field.errors}}</h></span>
                                   </div>
                               {% endfor %}
@@ -41,9 +44,7 @@
                                             {% render_field field id=field.id_for_label class="form-control form-control-lg mb-2" placeholder=field.label %}
                                             <label for="floatingPassword">{{field.label}}</label>
                                           </div>
-                                          {% for msg in messages %}
-                                              <span style="color: red;">{{msg}}</span>
-                                          {% endfor %}
+                                          
                                           <span><h style="color: red;">{{field.errors}}</h></span>
                                       </div>
                                   {% endif %}
