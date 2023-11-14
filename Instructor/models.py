@@ -25,4 +25,4 @@ class Instructor(models.Model):
     LastName =  models.CharField(max_length=20 , null=True , blank=True)
     Sex = models.CharField(max_length=25, null=True , choices=genderchoice ,  blank=True)
     def __str__(self):
-        return str(self.FirstName)
+        return str(self.FirstName + " "+ self.LastName)

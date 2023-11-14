@@ -64,7 +64,7 @@ def EditUserName(request):
         request.user.save() # saving the state of the user after it is updated 
     context = {'form': form , 'account':account , 'sender':'username'}
     if(request.user.Role.lower() == 'student'):
-        return render(request, 'student/editusername.html', context)
+        return render(request, 'student/editusername_password.html', context)
 
 def EditPassword(request):
     account = Userstate(request)['account']
@@ -84,5 +84,7 @@ def EditPassword(request):
         request.user.save()
     context= {'form':form , 'account':account , 'sender':'password'}
     if(request.user.Role.lower() == 'student'):
-        return render(request, 'student/editpassword.html', context)
+        return render(request, 'student/editusername_password.html', context)
+    elif(request.user.Role.lower() == 'instructor'):
+        return render(request, 'instructor/editusername_password.html', context)
    

@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'Student',
     'widget_tweaks',
     'Instructor',
+    'Course',
+    'Evaluation',
 ]
 
 MIDDLEWARE = [
