@@ -1,0 +1,15 @@
+<!-- Student/templates/admin/populate_from_excel.html -->
+{% extends "admin/change_form.html" %}
+
+{% block content %}
+  <div id="content-main">
+    <form method="post" enctype="multipart/form-data" novalidate>
+      {% csrf_token %}
+      {{ form.as_p }}
+      <input type="submit" name="_apply" value="Apply" class="default" />
+    </form>
+  </div>
+  <div>
+    <a href="{% url 'admin:index' %}">Back to admin index</a>
+  </div>
+{% endblock %}

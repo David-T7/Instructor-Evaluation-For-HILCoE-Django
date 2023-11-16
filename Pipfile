@@ -7,6 +7,7 @@ name = "pypi"
 django = "==4.2.7"
 django-widget-tweaks = "==1.4.9"
 psycopg2-binary = "*"
+openpyxl = "*"
 
 [dev-packages]
 

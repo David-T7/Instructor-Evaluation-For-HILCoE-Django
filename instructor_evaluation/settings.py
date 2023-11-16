@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'Instructor',
     'Course',
     'Evaluation',
+    'Staff',
+    'openpyxl',
 ]
 
 MIDDLEWARE = [

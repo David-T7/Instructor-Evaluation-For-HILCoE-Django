@@ -10,6 +10,12 @@ departmentchoice = [
     ('Both' , 'Both')
 ]
 
+coursetype = [
+    ( None, 'CourseType'),
+    ('Lecture', 'Lecture'),
+    ('Lab', 'Lab'),
+]
+
 seasonchoice = [
     ( None, 'SelectSeason'),
     ('spring', 'spring'),
@@ -22,6 +28,7 @@ seasonchoice = [
 class Course(models.Model):
     Course_id =  models.CharField(max_length=20 , unique=True,primary_key=True)
     CourseName = models.CharField(max_length=20 , null=True , blank=True)
+    CourseType = models.CharField(max_length=10 , null=True ,  choices=coursetype , blank=True)
     CreditHour = models.IntegerField(null=True , blank=True)
     Department = models.CharField(max_length=10 , null=True ,  choices=departmentchoice , blank=True)
     Instructors = models.ManyToManyField(Instructor)
@@ -44,3 +51,5 @@ class Term(models.Model):
     EvaluationDone = models.BooleanField(null=True , blank=True)
     def __str__(self):
         return str(self.Season + " " +str(self.Year))
+    
+
