@@ -1,0 +1,58 @@
+{% extends 'student/student.html' %}
+{% block content %}
+
+
+
+<!-- Content Section -->
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-8">
+            <!-- Welcome Message -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h1 class="card-title">Welcome,{{user.username}}!</h1>
+                    <p class="card-text">We're glad to have you here. Explore the latest updates and courses below.</p>
+                </div>
+            </div>
+
+            <!-- Important Updates or Notifications -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <h2 class="card-title">Important Updates</h2>
+                    <p class="card-text">Stay informed with the latest news and updates.</p>
+                    <!-- Add content for updates or notifications -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Enrolled Courses Section -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">Enrolled Courses</h2>
+                    <!-- List of Enrolled Courses as buttons -->
+                    <div class="d-grid gap-2">
+                        {% for studentenroll in studentenrollements %}
+                        <button class="btn btn-outline-primary course-btn" type="button" data-course="{{studentenroll.course.CourseName}}">{{studentenroll.course.CourseName}} ( {{studentenroll.course.Course_id}} )</button>
+                        <!-- Add more enrolled courses as buttons as needed -->
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Course Information Cards -->
+            <div class="course-cards mt-3">
+                <!-- Course information cards will be dynamically added here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script src="/static/js/studenthomestyle.js"></script>
+<!-- Your custom JavaScript -->
+
+
+</body>
+{% endblock %}

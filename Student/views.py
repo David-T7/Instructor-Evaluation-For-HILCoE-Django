@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from Account.forms import CustomUserCreationForm
-from Account.models import StudentInfo
+from Account.models import StudentInfo , Account
 from .forms import StudentCreationForm
 from django.contrib import  messages
 from django.shortcuts import redirect, render
+from .models import Student , StudentCourseEnrollment
+from Course.models import Course
 # Create your views here.
 
 def Register(request):
@@ -51,3 +53,9 @@ def Register(request):
 def Studnets(request):
     context = {'user':request.user}
     return render(request , 'student/student.html' , context)
+
+def studenthomepage(request):
+    student = Student.objects.get(Account_id = request.user)
+    student_enrollments = StudentCourseEnrollment.objects.filter(student = student)
+    context = {'active_page':'home' , 'studentenrollements':student_enrollments , }
+    return render(request , 'student/studenthome.html',context)

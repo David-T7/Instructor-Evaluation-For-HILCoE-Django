@@ -6,19 +6,19 @@
       <a href="#" class="nav-link h3 text-white my-2">
         Student
       </a>
-      <li class="nav-link">
+      <li class="nav-link {% if active_page == 'home' %}active{% endif %}">
         <i class="bx bxs-dashboard"></i>
-        <span class="mx-2"><a class="inner-anchor" href="#"> Home</a></span>
+        <span class="mx-2"><a class="inner-anchor" href="{% url 'studenthomepage' %}"> Home</a></span>
       </li>
-      <li class="nav-link">
+      <li class="nav-link {% if active_page == 'evaluation' %}active{% endif %}">
         <i class="bx bx-git-pull-request"></i>
         <span class="mx-2"><a class="inner-anchor" href="#">Evaluation</a></span>
       </li>
-      <li class="nav-link">
+      <li class="nav-link {% if active_page == 'editaccount' %}active{% endif %}">
         <i class="bx bx-edit"></i>
         <span class="mx-2"><a class="inner-anchor" href="{% url 'editpassword' %}"> Edit Account</a></span>
       </li>
-      <li class="nav-link">
+      <li class="nav-link {% if active_page == 'logout' %}active{% endif %}">
         <i class="bx bx-log-out"></i>
         <span class="mx-2"><a class="inner-anchor" href="{% url 'logout' %}" > Log Out </a></span>
       </li>
@@ -32,6 +32,7 @@
       </li>
     </ul>
   </div>
+
 
   <!-- Main Wrapper -->
   <div class="p-2 active-cont my-container overflow-hidden">

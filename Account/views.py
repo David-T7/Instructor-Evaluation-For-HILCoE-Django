@@ -82,7 +82,7 @@ def EditPassword(request):
         else:
                 messages.error(request,'please input correct information')
         request.user.save()
-    context= {'form':form , 'account':account , 'sender':'password'}
+    context= {'form':form , 'account':account , 'sender':'password' , 'active_page':'editaccount'}
     if(request.user.Role.lower() == 'student'):
         return render(request, 'student/editusername_password.html', context)
     elif(request.user.Role.lower() == 'instructor'):
