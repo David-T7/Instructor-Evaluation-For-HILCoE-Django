@@ -8,6 +8,7 @@ django = "==4.2.7"
 django-widget-tweaks = "==1.4.9"
 psycopg2-binary = "*"
 openpyxl = "*"
+django-sekizai = "*"
 
 [dev-packages]
 

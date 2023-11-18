@@ -1,3 +1,4 @@
+import json
 from django.shortcuts import render
 from Account.forms import CustomUserCreationForm
 from Account.models import StudentInfo , Account
@@ -55,7 +56,36 @@ def Studnets(request):
     return render(request , 'student/student.html' , context)
 
 def studenthomepage(request):
-    student = Student.objects.get(Account_id = request.user)
-    student_enrollments = StudentCourseEnrollment.objects.filter(student = student)
-    context = {'active_page':'home' , 'studentenrollements':student_enrollments , }
-    return render(request , 'student/studenthome.html',context)
+    student = Student.objects.get(Account_id=request.user)
+    student_enrollments = StudentCourseEnrollment.objects.filter(student=student)
+
+    # Create dictionaries to store course and instructor data
+    courseData = {}
+    instructorData = {}
+
+    # Populate course and instructor data based on student enrollments
+    for enrollment in student_enrollments:
+        course = enrollment.course
+        instructors = course.Instructors.all()
+
+        courseData[course.CourseName] = {
+            'coursename': course.CourseName,
+            'creditHours': course.CreditHour,
+            'courseId': course.Course_id,
+        }
+
+        instructorData[course.CourseName] = [
+            {'FirstName': instructor.FirstName, 'LastName': instructor.LastName , 'profilePic':'/static/'+str(instructor.ProfilePic) }
+            for instructor in instructors
+        ]
+
+    context = {
+        'active_page': 'home',
+        'studentenrollements': student_enrollments,
+        'courseData': json.dumps(courseData),
+        'instructorData': json.dumps(instructorData),
+    }
+
+    print("coursedata" , courseData  , "instructordata", instructorData)
+    return render(request, 'student/studenthome.html', context)
+

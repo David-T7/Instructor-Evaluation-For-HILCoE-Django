@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "12a89196db97bc91848e76828c1da0f93572579e9fdb3f53926a2eb5a4f985c8"
+            "sha256": "322dcccca5f47888863d99f7c864056689a5418154d39f3428f9488049957e70"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -32,6 +32,23 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==4.2.7"
+        },
+        "django-classy-tags": {
+            "hashes": [
+                "sha256:1c784cf1bac49c20a77b8f7d1541867c64076642a160a847ff449588d4e01e55",
+                "sha256:c8d9d1aa2fa6e71c4d866df4dd11d23a69b8d25bbb750b2490a17b161774ee59"
+            ],
+            "markers": "python_version >= '3.8'",
+            "version": "==4.1.0"
+        },
+        "django-sekizai": {
+            "hashes": [
+                "sha256:2aca36cbae0b5c0cefed9565416ec442335767fb3145bff11e58622fc653cdad",
+                "sha256:aa12e66ba0335fbe726b7d74cf4e8716b89a0be99a1304a9b9e8b191229e2e4a"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.8'",
+            "version": "==4.1.0"
         },
         "django-widget-tweaks": {
             "hashes": [
