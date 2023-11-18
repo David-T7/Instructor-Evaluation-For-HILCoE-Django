@@ -2,19 +2,21 @@ from django.db import models
 import uuid
 
 
+class CriteriaSection(models.Model):
+    Section = models.CharField(max_length=255 )
+    def __str__(self):
+        return str(self.Section)
+    
+
+
+
 class Criteria(models.Model):
-    SECTION_CHOICES = [
-        ('Course Organization', 'Course Organization'),
-        ('Knowledge of the subject matter', 'Knowledge of the subject matter'),
-        ('Teaching Methods', 'Teaching Methods'),
-        ('Personality Traits', 'Personality Traits'),
-        ('Availablity and Support', 'Availablity and Support'),
-        # Add more sections as needed
-    ]
-    Section = models.CharField(max_length=255, choices=SECTION_CHOICES)
+    Criteria_id = models.UUIDField(default=uuid.uuid4, unique=True,
+                          primary_key=True, editable=False)
+    Section = models.ForeignKey(CriteriaSection , on_delete=models.CASCADE) 
     description = models.TextField(null=True)
     def __str__(self):
-        return str(self.Section + "-" + self.description )
+        return str(self.Section.Section + "-" + self.description )
 
 
 
@@ -32,7 +34,7 @@ class EvaluationCriteria(models.Model):
       
         # Add more sections as needed
     ]
-    Criteria_id = models.UUIDField(default=uuid.uuid4, unique=True,primary_key=True, editable=False)
+    EvaluationCriteria_id = models.UUIDField(default=uuid.uuid4, unique=True,primary_key=True, editable=False)
     Criteria_data = models.ManyToManyField(Criteria)
     Evaluator = models.CharField(max_length=255, choices=Evaluator_CHOICES , null=True)
     Evaluatee = models.CharField(max_length=255, choices=Evaluatee_CHOICES , null=True)

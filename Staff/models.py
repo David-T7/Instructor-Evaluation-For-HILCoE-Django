@@ -28,6 +28,8 @@ class StaffEvaluationResult(models.Model):
     Instructor_id = models.ForeignKey(Instructor , on_delete=models.CASCADE)
     Term_id = models.ForeignKey(Term , on_delete=models.CASCADE)
     EvaluationResult = models.JSONField()
+    EvaluationDone = models.BooleanField(default=False , null=True)
+
     
     class Meta:
         # Add a unique constraint to ensure a student can evaluate a course only once
@@ -42,6 +44,8 @@ class PeerEvaluationResult(models.Model):
     Instructor_id = models.ForeignKey(Instructor , on_delete=models.CASCADE)
     Term_id = models.ForeignKey(Term , on_delete=models.CASCADE)
     EvaluationResult = models.JSONField()
+    EvaluationDone = models.BooleanField(default=False , null=True)
+
     
     class Meta:
         # Add a unique constraint to ensure a student can evaluate a course only once

@@ -1,0 +1,30 @@
+{% extends 'student/student.html' %}
+{% block content %}
+  <div class="container mt-4">
+    <h2>{{ term.Season }} {{ term.Year }} Enrolled Courses</h2>
+
+    {% if courses_data %}
+      <div class="row">
+        {% for course in courses_data %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">{{ course.course_name }}</h5>
+                <p class="card-text">Instructors:</p>
+                {% for instructor in course.instructors %}
+                  <p class="card-text">{{ instructor.title }}{{ instructor.name }}</p>
+                  {% if instructor.profile_pic %}
+                    <img src="/static/images{{ instructor.profile_pic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2">
+                  {% endif %}
+                {% endfor %}
+                <a href="#" class="btn btn-primary">Evaluate</a>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p>No enrolled courses for the selected term.</p>
+    {% endif %}
+  </div>
+{% endblock %}

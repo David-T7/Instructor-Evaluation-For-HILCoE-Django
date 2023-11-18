@@ -6,7 +6,7 @@ from .forms import StudentCreationForm
 from django.contrib import  messages
 from django.shortcuts import redirect, render
 from .models import Student , StudentCourseEnrollment
-from Course.models import Course
+from Course.models import Course , Term
 # Create your views here.
 
 def Register(request):
@@ -88,4 +88,41 @@ def studenthomepage(request):
 
     print("coursedata" , courseData  , "instructordata", instructorData)
     return render(request, 'student/studenthome.html', context)
+
+def student_evaluate_page(request):
+    term = Term.objects.last()
+    student = Student.objects.get(Account_id=request.user)
+    student_enrollments = StudentCourseEnrollment.objects.filter(student=student, term=term)
+
+    courses_data = []
+    for enrollment in student_enrollments:
+        instructors_data = []
+        for instructor in enrollment.course.Instructors.all():
+            instructor_info = {
+                'name': f'{instructor.FirstName} {instructor.LastName}',
+                'title': instructor.Title,
+                'profile_pic': instructor.ProfilePic.url if instructor.ProfilePic else None,
+            }
+            instructors_data.append(instructor_info)
+
+        course_data = {
+            'course_name': enrollment.course.CourseName,
+            'instructors': instructors_data,
+            'evaluate_url': f'/evaluate/{enrollment.id}/',  # Replace with the actual URL for evaluation
+        }
+        courses_data.append(course_data)
+
+    context = {
+        'courses_data': courses_data,
+        'term': term,
+        'active_page':'evaluation',
+    }
+
+    return render(request, 'student/evaluate.html', context)
+    
+    
+    
+    
+    
+    
 
