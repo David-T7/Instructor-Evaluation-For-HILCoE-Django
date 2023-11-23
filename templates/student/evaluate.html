@@ -14,7 +14,7 @@
                 {% for instructor in course.instructors %}
                   <p class="card-text">{{ instructor.title }}{{ instructor.name }}</p>
                   {% if instructor.profile_pic %}
-                    <img src="/static/images{{ instructor.profile_pic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2">
+                    <img src="{{ instructor.profile_pic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2">
                   {% endif %}
                 {% endfor %}
                 <a href="#" class="btn btn-primary">Evaluate</a>
