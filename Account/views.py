@@ -19,7 +19,7 @@ def Login(request , role):          # function based view for handling user logi
             if user is not None:
                 login(request, user) 
                 if(role.lower() =='student'):
-                    return redirect('studnet')  # redircting to other page after login
+                    return redirect('studenthomepage')  # redircting to other page after login
                 elif(role.lower() =='instructor'):
                     return redirect('instructor')  # redircting to other page after login
             else:
