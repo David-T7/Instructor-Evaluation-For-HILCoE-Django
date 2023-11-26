@@ -22,6 +22,9 @@ def Login(request , role):          # function based view for handling user logi
                     return redirect('studenthomepage')  # redircting to other page after login
                 elif(role.lower() =='instructor'):
                     return redirect('instructor')  # redircting to other page after login
+                elif(role.lower() =='staffmember'):
+                    print("in staff")
+                    return redirect('staffhomepage')  # redircting to other page after login
             else:
                 login(request, user , backend='django.contrib.auth.backends.ModelBackend')
                 
@@ -65,6 +68,11 @@ def EditUserName(request):
     context = {'form': form , 'account':account , 'sender':'username'}
     if(request.user.Role.lower() == 'student'):
         return render(request, 'student/editusername_password.html', context)
+    elif(request.user.Role.lower() == 'instructor'):
+        return render(request, 'instructor/editusername_password.html', context)
+    elif(request.user.Role.lower() == 'staffmember'):
+        return render(request, 'staff/editusername_password.html', context)
+   
 
 def EditPassword(request):
     account = Userstate(request)['account']
@@ -87,4 +95,6 @@ def EditPassword(request):
         return render(request, 'student/editusername_password.html', context)
     elif(request.user.Role.lower() == 'instructor'):
         return render(request, 'instructor/editusername_password.html', context)
+    elif(request.user.Role.lower() == 'staffmember'):
+        return render(request, 'staff/editusername_password.html', context)
    

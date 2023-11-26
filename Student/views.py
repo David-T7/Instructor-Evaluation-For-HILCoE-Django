@@ -145,17 +145,19 @@ def evaluate_course(request, student_id, course_id, instructor_id):
         return redirect('evaluate')  # Redirect to home or another page
 
     enrollment = StudentCourseEnrollment.objects.get(student=student, course=course, term=term)
-    all_criteria_objects = EvaluationCriteria.objects.get(Evaluatee=course.CourseType)  # Adjust based on your criteria
+    all_criteria_objects = EvaluationCriteria.objects.get(Evaluator='Student')  # Adjust based on your criteria
     # all_criteria_objects = EvaluationCriteria.objects.all()
     # Collect all distinct criteria sections using Python
     all_criteria_data = all_criteria_objects.Criteria_data.all()
-    all_criteria_sections = []
+    all_criteria = []
+    criteria_sections = []
     for criteria_object in all_criteria_data:
         criteria = Criteria.objects.get(Criteria_id= criteria_object.Criteria_id) 
-        all_criteria_sections.append(criteria)
+        if criteria.Section not in  criteria_sections :
+            all_criteria.append(criteria)
+            criteria_sections.append(criteria.Section)
         print("criteria section" , criteria.Section )
-
-    print("all sectins are ", all_criteria_sections)
+    print("all sectins are ", all_criteria)
     if request.method == 'POST':
         evaluation_result = {}
         for criteria in all_criteria_data:
@@ -188,7 +190,7 @@ def evaluate_course(request, student_id, course_id, instructor_id):
         'enrollment': enrollment,
         'criteria_data': all_criteria_data,
         'student':student, 
-        'all_criteria_sections':all_criteria_sections ,
+        'all_criteria_sections': all_criteria ,
         'instructor':instructor,
     }
 

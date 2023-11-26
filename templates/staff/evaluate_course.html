@@ -1,4 +1,4 @@
-{% extends 'student/student.html' %}
+{% extends 'staff/staff.html' %}
 {% load static %}
 {% block content %}
   <div class="container mt-4">
@@ -19,9 +19,9 @@
     {% endif %}
     <div class="text-center">
     <h4 class="card-title text-primary">Instructor: {{ instructor.Title }}{{ instructor.FirstName }}{{ instructor.LastName }}</h3>
-    <h4 class="card-title text-primary">Course: {{ enrollment.course.CourseName }} ({{enrollment.course.Course_id}})</h3>
+    <h4 class="card-title text-primary">Course: {{ course.CourseName }} ({{ course.Course_id}})</h3>
     <b>Please fill out the form in evaluating your instructor for the semister.After completion press the submit button</b>
-    <div>
+    </div>
       <form method="post">
       {% csrf_token %}
 
@@ -41,7 +41,7 @@
           {% if criteria.Section == section.Section %}
               <tr>
                 <td style="background-color:rgb(181, 206, 253) ;">{{ criteria.description }}</td>
-                <td class="text-center" style="background-color:rgb(181, 206, 253);" >
+                <td class="score-column" style="background-color:rgb(181, 206, 253);">
                   <div class="form-check form-check-inline">
                     <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="excellent_{{ criteria.Criteria_id }}" value="Excellent">
                     <label class="form-check-label" for="excellent_{{ criteria.id }}">Excellent</label>

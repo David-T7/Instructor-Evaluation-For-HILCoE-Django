@@ -39,7 +39,7 @@ class EvaluationCriteria(models.Model):
     Evaluator = models.CharField(max_length=255, choices=Evaluator_CHOICES , null=True)
     Evaluatee = models.CharField(max_length=255, choices=Evaluatee_CHOICES , null=True)
     def __str__(self):
-        return str(self.Evaluatee +" evaluation criteria" )
+        return str(self.Evaluator +" evaluation criteria" )
     
     
     

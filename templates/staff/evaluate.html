@@ -1,0 +1,48 @@
+{% extends 'staff/staff.html' %}
+{% block content %}
+  <div class="container mt-4">
+    {% for message in messages %}
+<div class="container-fluid p-0">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="True">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+</div>
+{% endfor %}
+    <h2 class="text-center text-uppercase font-weight-bold">{{ term.Season }} {{ term.Year }} Evaluation</h2>
+
+    {% if courses_data %}
+      <div class="row">
+        {% for course in courses_data %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                <div class="text-center">
+                <h3 class="card-title text-primary">{{ course.course_name }} ({{ course.course_id }})</h3>
+                {% for instructor in course.instructors %}
+                  {% if instructor.profile_pic %}
+                  
+                  <img src="{{ instructor.profile_pic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
+                  {% endif %}
+                  <h4 class="mb-3">Instructor: {{ instructor.title }} {{ instructor.name }} </h4>
+                  <div class="mb-3 d-md-flex">
+                    {% if course.course_id in evaluated_courses   %}
+                    <a href="#" class="btn btn-primary w-100 max-width-300 disabled">Evaluated</a>
+                    {% else %} 
+                    <a href="{% url 'staff_evaluate_course' staff.Staff_id course.course_id instructor.instructor_id %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
+                    {% endif %}                 
+                   </div>
+                </div>
+                  {% endfor %}
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="text-muted text-center">No enrolled courses for the selected term.</p>
+    {% endif %}
+  </div>
+{% endblock %}
