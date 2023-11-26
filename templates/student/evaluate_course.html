@@ -1,0 +1,78 @@
+{% extends 'student/student.html' %}
+{% load static %}
+{% block content %}
+  <div class="container mt-4">
+    {% for message in messages %}
+<div class="container-fluid p-0">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="True">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+</div>
+{% endfor %}
+    {% if instructor.ProfilePic %}
+    <div class="text-center">
+    <img src="{{ instructor.ProfilePic.url }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
+    </div>
+    {% endif %}
+    <div class="text-center">
+    <h4 class="card-title text-primary">Instructor: {{ instructor.Title }}{{ instructor.FirstName }}{{ instructor.LastName }}</h3>
+    <h4 class="card-title text-primary">Course: {{ enrollment.course.CourseName }} ({{enrollment.course.Course_id}})</h3>
+    <b>Please fill out the form in evaluating your instructor for the semister.After completion press the submit button</b>
+    <div>
+      <form method="post">
+      {% csrf_token %}
+
+      <table class="table table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th class="text-center" style="background-color:rgb(181, 206, 253)">Criteria</th>
+            <th class="text-center" style="background-color:rgb(181, 206, 253)">Score</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for section in all_criteria_sections %}  
+          <tr>
+            <td colspan="3" class="bg text-white font-weight-bold text-center " style="background-color:rgb(75, 130, 233) ;">{{ section.Section }}</td>
+          </tr>
+          {% for criteria in criteria_data %}
+          {% if criteria.Section == section.Section %}
+              <tr>
+                <td style="background-color:rgb(181, 206, 253) ;">{{ criteria.description }}</td>
+                <td class="text-center" style="background-color:rgb(181, 206, 253);" >
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="excellent_{{ criteria.Criteria_id }}" value="Excellent">
+                    <label class="form-check-label" for="excellent_{{ criteria.id }}">Excellent</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_good_{{ criteria.Criteria_id }}" value="Very Good">
+                    <label class="form-check-label" for="very_good_{{ criteria.id }}">Very Good</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="good_{{ criteria.Criteria_id }}" value="Good">
+                    <label class="form-check-label" for="good_{{ criteria.id }}">Good</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="poor_{{ criteria.Criteria_id }}" value="Poor">
+                    <label class="form-check-label" for="poor_{{ criteria.id }}">Poor</label>
+                  </div>
+                  <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_poor_{{ criteria.Criteria_id }}" value="Very Poor">
+                    <label class="form-check-label" for="very_poor_{{ criteria.id }}">Very Poor</label>
+                  </div>
+                  <!-- Add similar code for the other options -->
+                </td>
+              </tr>
+            {% endif %}
+            {% endfor %}
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="text-center">
+      <button type="submit" class="btn btn-primary">Submit Evaluation</button>
+    </div> 
+    </form>
+  </div>
+{% endblock %}

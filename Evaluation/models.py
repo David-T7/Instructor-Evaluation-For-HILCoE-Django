@@ -29,8 +29,8 @@ class EvaluationCriteria(models.Model):
         # Add more sections as needed
     ]
     Evaluatee_CHOICES = [
-        ('Lecture Insructor', 'Lecture Insructor'),
-        ('Lab Instructor', 'Lab Instructor'),
+        ('Lecture', 'Lecture'),
+        ('Lab', 'Lab'),
       
         # Add more sections as needed
     ]

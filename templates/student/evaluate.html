@@ -1,7 +1,17 @@
 {% extends 'student/student.html' %}
 {% block content %}
   <div class="container mt-4">
-    <h2>{{ term.Season }} {{ term.Year }} Enrolled Courses</h2>
+    {% for message in messages %}
+<div class="container-fluid p-0">
+  <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
+    <button type="button" class="close" data-bs-dismiss="alert" aria-label="Close">
+      <span aria-hidden="True">&times;</span>
+    </button>
+    {{ message }}
+  </div>
+</div>
+{% endfor %}
+    <h2 class="text-center text-uppercase font-weight-bold">{{ term.Season }} {{ term.Year }} Enrolled Courses</h2>
 
     {% if courses_data %}
       <div class="row">
@@ -9,22 +19,30 @@
           <div class="col-md-4 mb-4">
             <div class="card">
               <div class="card-body">
-                <h5 class="card-title">{{ course.course_name }}</h5>
-                <p class="card-text">Instructors:</p>
+                <div class="text-center">
+                <h3 class="card-title text-primary">{{ course.course_name }} ({{ course.course_id }})</h3>
                 {% for instructor in course.instructors %}
-                  <p class="card-text">{{ instructor.title }}{{ instructor.name }}</p>
                   {% if instructor.profile_pic %}
-                    <img src="{{ instructor.profile_pic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2">
+                  
+                  <img src="{{ instructor.profile_pic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
                   {% endif %}
-                {% endfor %}
-                <a href="#" class="btn btn-primary">Evaluate</a>
+                  <h4 class="mb-3">Instructor: {{ instructor.title }} {{ instructor.name }} </h4>
+                  <div class="mb-3 d-md-flex">
+                    {% if course.course_id in evaluated_courses   %}
+                    <a href="#" class="btn btn-primary w-100 max-width-300 disabled">Evaluated</a>
+                    {% else %} 
+                    <a href="{% url 'evaluate_course' student.Student_id course.course_id instructor.instructor_id %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
+                    {% endif %}                 
+                   </div>
+                </div>
+                  {% endfor %}
               </div>
             </div>
           </div>
         {% endfor %}
       </div>
     {% else %}
-      <p>No enrolled courses for the selected term.</p>
+      <p class="text-muted text-center">No enrolled courses for the selected term.</p>
     {% endif %}
   </div>
 {% endblock %}
