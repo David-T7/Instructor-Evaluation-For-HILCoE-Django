@@ -101,7 +101,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id):
             if not created:
                 messages.error(request, 'Please evaluate all sections!')
             messages.success(request, 'You have completed Evaluation for course '+ course.CourseName) 
-            return redirect('evaluate')  # Redirect to home or another page after evaluation
+            return redirect('evaluate_staff')  # Redirect to home or another page after evaluation
         else:
             messages.error(request, 'Please evaluate all criteria descriptions before submitting!')
     context = {

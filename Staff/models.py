@@ -33,7 +33,7 @@ class StaffEvaluationResult(models.Model):
     
     class Meta:
         # Add a unique constraint to ensure a student can evaluate a course only once
-        unique_together = ('Staff_id', 'Instructor_id', 'Term_id')
+        unique_together = ('Staff_id', 'Course_id', 'Term_id')
     def __str__(self):
         return str(self.Instructor_id.FirstName)
     
