@@ -6,6 +6,8 @@ from django.contrib import  messages
 from django.contrib.auth.forms import PasswordChangeForm 
 from django.contrib.auth import update_session_auth_hash
 
+from Instructor.models import Instructor
+
 
 
 # Create your views here.
@@ -21,7 +23,7 @@ def Login(request , role):          # function based view for handling user logi
                 if(role.lower() =='student'):
                     return redirect('studenthomepage')  # redircting to other page after login
                 elif(role.lower() =='instructor'):
-                    return redirect('instructor')  # redircting to other page after login
+                    return redirect('instructorhomepage')  # redircting to other page after login
                 elif(role.lower() =='staffmember'):
                     print("in staff")
                     return redirect('staffhomepage')  # redircting to other page after login
@@ -50,12 +52,20 @@ def Userstate(request):  # for getting the state of the user
     account = Account.objects.get(id=state.id) 
     context={'account':account}
     return context
+def getInstructor(request):
+    print("role is ",request.user.Role)
+    if(request.user.Role == "Instructor"):
+        instructor = Instructor.objects.get(Account_id = request.user)
+        return instructor
+    return
+    
+    
 
 def EditUserName(request):
     state = request.user # hodling the state of the user
     account = Userstate(request)['account']
+    instructor=getInstructor(request)
     form= CustomUserChangeForm(instance=state)  # using form created in forms.py
-
     if request.method == 'POST':
         form = CustomUserChangeForm(request.POST, instance=state)
         if (form.is_valid()):
@@ -65,7 +75,7 @@ def EditUserName(request):
             except:
                 None
         request.user.save() # saving the state of the user after it is updated 
-    context = {'form': form , 'account':account , 'sender':'username'}
+    context = {'form': form , 'account':account , 'sender':'username' , 'instructor':instructor}
     if(request.user.Role.lower() == 'student'):
         return render(request, 'student/editusername_password.html', context)
     elif(request.user.Role.lower() == 'instructor'):
@@ -76,6 +86,7 @@ def EditUserName(request):
 
 def EditPassword(request):
     account = Userstate(request)['account']
+    instructor=getInstructor(request)
     form = PasswordChangeForm(request.user)
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)
@@ -90,7 +101,7 @@ def EditPassword(request):
         else:
                 messages.error(request,'please input correct information')
         request.user.save()
-    context= {'form':form , 'account':account , 'sender':'password' , 'active_page':'editaccount'}
+    context= {'form':form , 'account':account , 'sender':'password' , 'active_page':'editaccount','instructor':instructor}
     if(request.user.Role.lower() == 'student'):
         return render(request, 'student/editusername_password.html', context)
     elif(request.user.Role.lower() == 'instructor'):

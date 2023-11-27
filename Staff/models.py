@@ -26,14 +26,13 @@ class StaffEvaluationResult(models.Model):
     Staff_id = models.ForeignKey(Staff , on_delete=models.CASCADE)
     Course_id = models.ForeignKey(Course , on_delete=models.CASCADE)
     Instructor_id = models.ForeignKey(Instructor , on_delete=models.CASCADE)
+    CourseType = models.CharField(max_length=20 , null=True , blank=True)
     Term_id = models.ForeignKey(Term , on_delete=models.CASCADE)
     EvaluationResult = models.JSONField()
-    EvaluationDone = models.BooleanField(default=False , null=True)
-
-    
+    EvaluationDone = models.BooleanField(default=False , null=True)    
     class Meta:
         # Add a unique constraint to ensure a student can evaluate a course only once
-        unique_together = ('Staff_id', 'Course_id', 'Term_id')
+        unique_together = ('Staff_id', 'Course_id', 'Term_id' , 'CourseType')
     def __str__(self):
         return str(self.Instructor_id.FirstName)
     
@@ -42,13 +41,14 @@ class PeerEvaluationResult(models.Model):
     Evaluator_Instructor_id = models.ForeignKey(Instructor , on_delete=models.CASCADE , related_name="evaluator_instructor")
     Course_id = models.ForeignKey(Course , on_delete=models.CASCADE)
     Instructor_id = models.ForeignKey(Instructor , on_delete=models.CASCADE)
+    CourseType = models.CharField(max_length=20 , null=True , blank=True)
     Term_id = models.ForeignKey(Term , on_delete=models.CASCADE)
     EvaluationResult = models.JSONField()
     EvaluationDone = models.BooleanField(default=False , null=True)
 
     
     class Meta:
-        # Add a unique constraint to ensure a student can evaluate a course only once
-        unique_together = ('Evaluator_Instructor_id', 'Instructor_id', 'Term_id')
+        # Add a unique constraint to ensure an instructor  can evaluate a shared course only once
+        unique_together = ('Evaluator_Instructor_id', 'Course_id', 'Term_id' , 'CourseType')
     def __str__(self):
         return str(self.Instructor_id.FirstName)

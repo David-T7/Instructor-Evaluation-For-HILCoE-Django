@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from os import path
 from django.contrib import admin
 from django.shortcuts import render
-from .models import Student, StudentEvaluationResult
+from .models import Student, StudentEvaluationResult , Batch
 from django.conf import settings
 import os
 
@@ -86,3 +86,4 @@ admin.site.register(Student)
 # Register the model admin with the admin site
 admin.site.register(StudentCourseEnrollment, StudentCourseEnrollmentAdmin)
 admin.site.register(StudentEvaluationResult)
+admin.site.register(Batch)

@@ -1,6 +1,5 @@
 from django.shortcuts import redirect, render
-
-from Course.models import Course, Term
+from Course.models import Course, CourseInstructor, Term
 from Evaluation.models import Criteria, EvaluationCriteria
 from Instructor.models import Instructor
 from Student.models import StudentCourseEnrollment
@@ -10,26 +9,31 @@ from django.contrib import  messages
 def stafflandingpage(request): 
     return render(request , 'stafflandingpage.html')
 def staffHomePage(request):
-    return render(request , 'staff/staffhome.html')
+    context = { 'active_page': 'home',}
+    return render(request , 'staff/staffhome.html' , context)
 
 def staff_evaluate_page(request):
     term = Term.objects.last()
     staff = Staff.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(term=term)
     staff_evaluation_result = StaffEvaluationResult.objects.filter(Staff_id = staff)
-    evaluated_courses = []
+    evaluated_courses_types = []
+    evaluated_instructors = []
+    course_instructors = []    
     if staff_evaluation_result:
         for staff_evaluation in staff_evaluation_result:
-            evaluated_courses.append(staff_evaluation.Course_id.Course_id)
+            evaluated_instructors.append(staff_evaluation.Instructor_id.Instructor_id)
+            evaluated_courses_types.append(staff_evaluation.CourseType)
     courses_data = []
     for enrollment in student_enrollments:
         instructors_data = []
-        for instructor in enrollment.course.Instructors.all():
+        for courseinstructors in CourseInstructor.objects.filter(Course = enrollment.course ):
+            course_instructors.append(courseinstructors)
             instructor_info = {
-                'name': f'{instructor.FirstName} {instructor.LastName}',
-                'title': instructor.Title,
-                'instructor_id':instructor.Instructor_id , 
-                'profile_pic': instructor.ProfilePic.url if instructor.ProfilePic else None,
+                'name': f'{courseinstructors.Instructors.FirstName} {courseinstructors.Instructors.LastName}',
+                'title': courseinstructors.Instructors.Title,
+                'instructor_id':courseinstructors.Instructors.Instructor_id , 
+                'profile_pic': courseinstructors.Instructors.ProfilePic.url if courseinstructors.Instructors.ProfilePic else None,
             }
             instructors_data.append(instructor_info)
 
@@ -46,12 +50,14 @@ def staff_evaluate_page(request):
         'term': term,
         'active_page':'evaluation',
         'staff':staff,
-        'evaluated_courses':evaluated_courses,
+        'evaluated_courses_types':evaluated_courses_types,
+        'course_instructors':course_instructors,
+        'evaluated_instructors':evaluated_instructors,
     }
 
     return render(request, 'staff/evaluate.html', context)
 
-def staff_evaluate_course(request, staff_id, course_id, instructor_id):
+def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_type):
     evaluationMapping= {'Excellent':5,'Very Good':4,'Good':3,'Poor':2,'Very Poor':1}
     evaluated_criteria_descriptions = set()
     staff = Staff.objects.get(Account_id=request.user)
@@ -94,6 +100,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id):
                 Staff_id=staff,
                 Course_id=course,
                 Instructor_id=instructor,
+                CourseType = course_type,
                 Term_id=term,
                 defaults={'EvaluationResult': evaluation_result, 'EvaluationDone': True}
             )
@@ -107,8 +114,10 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id):
     context = {
         'course':course,
         'criteria_data': all_criteria_data, 
+        'active_page':'evaluation',
         'all_criteria_sections':all_criteria ,
         'instructor':instructor,
+        'course_type':course_type,
     }
 
     return render(request, 'staff/evaluate_course.html', context)

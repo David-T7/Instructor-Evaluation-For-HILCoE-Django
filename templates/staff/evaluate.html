@@ -13,29 +13,28 @@
 {% endfor %}
     <h2 class="text-center text-uppercase font-weight-bold">{{ term.Season }} {{ term.Year }} Evaluation</h2>
 
-    {% if courses_data %}
+    {% if course_instructors %}
       <div class="row">
-        {% for course in courses_data %}
+        {% for course in course_instructors %}
           <div class="col-md-4 mb-4">
             <div class="card">
               <div class="card-body">
                 <div class="text-center">
-                <h3 class="card-title text-primary">{{ course.course_name }} ({{ course.course_id }})</h3>
-                {% for instructor in course.instructors %}
-                  {% if instructor.profile_pic %}
-                  
-                  <img src="{{ instructor.profile_pic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
+                <h3 class="card-title text-primary">{{ course.Course.CourseName }} ({{ course.Course.Course_id }}) {{course.CourseType}}</h3>
+                
+                  {% if course.Instructors.ProfilePic %}
+                  <img src="{{ course.Instructors.ProfilePic.url }}" alt="{{ instructor.FirstName }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
                   {% endif %}
-                  <h4 class="mb-3">Instructor: {{ instructor.title }} {{ instructor.name }} </h4>
+                  <h4 class="mb-3">Instructor: {{ course.Instructors.Title }} {{ course.Instructors.FirstName }} {{ course.Instructors.LastName }} </h4>
                   <div class="mb-3 d-md-flex">
-                    {% if course.course_id in evaluated_courses   %}
+                    {% if course.Instructors.Instructor_id in evaluated_instructors and course.CourseType in evaluated_courses_types %}
                     <a href="#" class="btn btn-primary w-100 max-width-300 disabled">Evaluated</a>
                     {% else %} 
-                    <a href="{% url 'staff_evaluate_course' staff.Staff_id course.course_id instructor.instructor_id %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
+                    <a href="{% url 'staff_evaluate_course' staff.Staff_id course.Course.Course_id course.Instructors.Instructor_id course.CourseType %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
                     {% endif %}                 
                    </div>
                 </div>
-                  {% endfor %}
+                
               </div>
             </div>
           </div>

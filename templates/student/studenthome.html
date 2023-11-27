@@ -33,9 +33,11 @@
                     <h2 class="card-title">Enrolled Courses</h2>
                     <!-- List of Enrolled Courses as buttons -->
                     <div class="d-grid gap-2">
-                        {% for studentenroll in studentenrollements %}
-                        <button class="btn btn-outline-primary course-btn" type="button" data-coursename="{{studentenroll.course.CourseName}}" data-course="{{ courseData }}" data-instructor="{{ instructorData }}"  >{{studentenroll.course.CourseName}} ( {{studentenroll.course.Course_id}} )</button>
+                        {% for courses in courseinstructors %}
+                        {% for course in courses %}
+                        <button class="btn btn-outline-primary course-btn" type="button" data-instructorid="{{course.Instructors.Instructor_id}}" data-coursename="{{course.Course.CourseName}}" data-course="{{ courseData }}" data-instructor="{{ instructorData }}" data-coursetype="{{ courseType }}" >{{course.Course.CourseName}} ( {{course.Course.Course_id}} ) -  {{course.CourseType}}</button>
                         <!-- Add more enrolled courses as buttons as needed -->
+                        {% endfor %}
                         {% endfor %}
                     </div>
                 </div>

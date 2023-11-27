@@ -1,4 +1,4 @@
-{% extends 'student/student.html' %}
+{% extends 'instructor/instructor.html' %}
 {% block content %}
   <div class="container mt-4">
     {% for message in messages %}
@@ -11,7 +11,7 @@
   </div>
 </div>
 {% endfor %}
-    <h2 class="text-center text-uppercase font-weight-bold">{{ term.Season }} {{ term.Year }} Enrolled Courses</h2>
+    <h2 class="text-center text-uppercase font-weight-bold">{{ term.Season }} {{ term.Year }} Evaluation</h2>
 
     {% if course_instructors %}
       <div class="row">
@@ -30,7 +30,7 @@
                     {% if course.Instructors.Instructor_id in evaluated_instructors and course.CourseType in evaluated_courses_types %}
                     <a href="#" class="btn btn-primary w-100 max-width-300 disabled">Evaluated</a>
                     {% else %} 
-                    <a href="{% url 'evaluate_course' student.Student_id course.Course.Course_id course.Instructors.Instructor_id course.CourseType %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
+                    <a href="{% url 'instructor_evaluate_course' instructor.Instructor_id course.Course.Course_id course.Instructors.Instructor_id course.CourseType %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
                     {% endif %}                 
                    </div>
                 </div>

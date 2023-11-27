@@ -8,7 +8,7 @@ from .forms import StudentCreationForm
 from django.contrib import  messages
 from django.shortcuts import redirect, render
 from .models import Student , StudentCourseEnrollment, StudentEvaluationResult
-from Course.models import Course , Term
+from Course.models import Course , Term , CourseInstructor
 # Create your views here.
 
 def Register(request):
@@ -60,7 +60,7 @@ def Studnets(request):
 def studenthomepage(request):
     student = Student.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(student=student)
-
+    courseinstructors = []    
     # Create dictionaries to store course and instructor data
     courseData = {}
     instructorData = {}
@@ -68,24 +68,27 @@ def studenthomepage(request):
     # Populate course and instructor data based on student enrollments
     for enrollment in student_enrollments:
         course = enrollment.course
-        instructors = course.Instructors.all()
+        course_instructors = CourseInstructor.objects.filter(Course = course ,Batch = student.Batch )
+        courseinstructors.append(course_instructors)
+        for courseinstructor in course_instructors:        
+            courseData[courseinstructor.Instructors.Instructor_id] = {
+                'coursename': courseinstructor.Course.CourseName,
+                'creditHours': courseinstructor.Course.CreditHour,
+                'courseId': courseinstructor.Course.Course_id,
+                'courseType':courseinstructor.CourseType,
+            }
 
-        courseData[course.CourseName] = {
-            'coursename': course.CourseName,
-            'creditHours': course.CreditHour,
-            'courseId': course.Course_id,
-        }
-
-        instructorData[course.CourseName] = [
-            {'FirstName': instructor.FirstName, 'LastName': instructor.LastName , 'profilePic':'/static/'+str(instructor.ProfilePic) }
-            for instructor in instructors
-        ]
-
+            instructorData[courseinstructor.Instructors.Instructor_id] = [
+            {'FirstName': courseinstructor.Instructors.FirstName, 'LastName': courseinstructor.Instructors.LastName , 'profilePic':'/static/'+str(courseinstructor.Instructors.ProfilePic) }
+            ]
+    for course in courseinstructors:
+         print("course instructor to be send is ", course)
     context = {
         'active_page': 'home',
         'studentenrollements': student_enrollments,
         'courseData': json.dumps(courseData),
         'instructorData': json.dumps(instructorData),
+        'courseinstructors':courseinstructors
     }
 
     print("coursedata" , courseData  , "instructordata", instructorData)
@@ -96,19 +99,23 @@ def student_evaluate_page(request):
     student = Student.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(student=student, term=term)
     student_evaluation_result = StudentEvaluationResult.objects.filter(Student_id = student)
-    evaluated_courses = []
+    evaluated_courses_types = []
+    evaluated_instructors = []
+    course_instructors = []    
     if student_evaluation_result:
         for student_evaluation in student_evaluation_result:
-            evaluated_courses.append(student_evaluation.Course_id.Course_id)
+            evaluated_instructors.append(student_evaluation.Instructor_id.Instructor_id)
+            evaluated_courses_types.append(student_evaluation.CourseType)
     courses_data = []
     for enrollment in student_enrollments:
         instructors_data = []
-        for instructor in enrollment.course.Instructors.all():
+        for courseinstructors in CourseInstructor.objects.filter(Course = enrollment.course ):
+            course_instructors.append(courseinstructors)
             instructor_info = {
-                'name': f'{instructor.FirstName} {instructor.LastName}',
-                'title': instructor.Title,
-                'instructor_id':instructor.Instructor_id , 
-                'profile_pic': instructor.ProfilePic.url if instructor.ProfilePic else None,
+                'name': f'{courseinstructors.Instructors.FirstName} {courseinstructors.Instructors.LastName}',
+                'title': courseinstructors.Instructors.Title,
+                'instructor_id':courseinstructors.Instructors.Instructor_id , 
+                'profile_pic': courseinstructors.Instructors.ProfilePic.url if courseinstructors.Instructors.ProfilePic else None,
             }
             instructors_data.append(instructor_info)
 
@@ -125,12 +132,14 @@ def student_evaluate_page(request):
         'term': term,
         'active_page':'evaluation',
         'student':student,
-        'evaluated_courses':evaluated_courses,
+        'evaluated_courses_types':evaluated_courses_types,
+        'course_instructors':course_instructors,
+        'evaluated_instructors':evaluated_instructors,
     }
 
     return render(request, 'student/evaluate.html', context)
     
-def evaluate_course(request, student_id, course_id, instructor_id):
+def evaluate_course(request, student_id, course_id, instructor_id , course_type):
     evaluationMapping= {'Excellent':5,'Very Good':4,'Good':3,'Poor':2,'Very Poor':1}
     evaluated_criteria_descriptions = set()
     student = Student.objects.get(Student_id=student_id)
@@ -176,6 +185,7 @@ def evaluate_course(request, student_id, course_id, instructor_id):
                 Student_id=student,
                 Course_id=course,
                 Instructor_id=instructor,
+                CourseType= course_type , 
                 Term_id=term,
                 defaults={'EvaluationResult': evaluation_result, 'EvaluationDone': True}
             )
@@ -190,8 +200,10 @@ def evaluate_course(request, student_id, course_id, instructor_id):
         'enrollment': enrollment,
         'criteria_data': all_criteria_data,
         'student':student, 
+        'active_page':'evaluation',
         'all_criteria_sections': all_criteria ,
         'instructor':instructor,
+        'course_type':course_type,
     }
 
     return render(request, 'student/evaluate_course.html', context)
