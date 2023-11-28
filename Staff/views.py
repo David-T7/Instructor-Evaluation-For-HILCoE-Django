@@ -121,3 +121,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
     }
 
     return render(request, 'staff/evaluate_course.html', context)
+
+def academicheadHomePage(request):
+    context = { 'active_page': 'home',}
+    return render(request , 'academichead/academicheadhome.html' , context)

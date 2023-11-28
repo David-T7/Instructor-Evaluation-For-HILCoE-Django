@@ -9,6 +9,12 @@ from django.contrib import  messages
 from django.shortcuts import redirect, render
 from .models import Student , StudentCourseEnrollment, StudentEvaluationResult
 from Course.models import Course , Term , CourseInstructor
+from django.db.models import Avg
+from django.db.models import F, Func, Value
+from django.db.models.functions import Cast
+from django.db import models
+
+
 # Create your views here.
 
 def Register(request):
@@ -208,7 +214,53 @@ def evaluate_course(request, student_id, course_id, instructor_id , course_type)
 
     return render(request, 'student/evaluate_course.html', context)
     
+def student_evaluation_reports(request):
+    # Retrieve all unique instructors evaluated by students for the term
+    courses = Course.objects.all()
+
+    # Prepare a list to store instructor information with average scores
+    instructor_data = []
     
+    # Iterate through instructors and calculate average scores
+    for course_type in ['Lecture', 'Lab']:
+        for course in courses:
+            total_avg_score = 0
+            instructor = None
+            evaluations = StudentEvaluationResult.objects.filter(
+                Course_id =course,
+                Term_id=Term.objects.last(),
+                EvaluationDone=True ,
+                CourseType = course_type
+                    )
+            if evaluations:
+                for evaluation in evaluations:
+                    if not instructor:
+                        instructor = evaluation.Instructor_id
+                    avg_score = 0
+                    len = 0
+                    # Extract values from the EvaluationResult JSON field
+                    print('evaluatin result is ' , evaluation.EvaluationResult['evaluation'] )
+                    for category, sub_dict in evaluation.EvaluationResult.items():
+                        for criterion, score in sub_dict.items():
+                            if isinstance(score, (int, float)):
+                                len+=1
+                                avg_score += score
+                    avg_score/= len
+                    total_avg_score += avg_score
+                    print("average score is " , avg_score)
+                    # Append instructor information to the list
+                if evaluations: total_avg_score /=  evaluations.__len__()
+                instructor_data.append({
+                    'instructor': instructor,
+                    'course': course,
+                    'course_type': course_type,
+                    'average_score': total_avg_score.__round__(2),
+                    })
+            
+
+    context = {'instructor_data': instructor_data , 'active_page':'report',}
+    print("instructor infor ",instructor_data)
+    return render(request, 'academichead/student_evaluation_reports.html', context)    
     
     
 

@@ -1,0 +1,48 @@
+{% extends 'academichead/academichead.html' %}
+{% block content %}
+  <div class="container mt-4">
+    <h2 class="text-center mb-4">Student Evaluation Reports</h2>
+
+    <div class="row">
+      {% if instructor_data %}
+        {% for instructor_info in instructor_data %}
+          <div class="col-md-4 mb-4">
+            <div class="card">
+              <div class="card-body">
+                {% if instructor_info.instructor.ProfilePic %}
+                 <div class="text-center">
+                  <img src="{{ instructor_info.instructor.ProfilePic.url }}" alt="{{ instructor.FirstName }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
+                 </div>
+                  {% endif %}
+                  <div class="text-center">
+                <h4 class="card-title text-primary">{{ instructor_info.instructor.Title }} {{ instructor_info.instructor.FirstName }} {{ instructor_info.instructor.LastName }}</h4>
+              </div>
+                <p class="card-text">
+                    <h5 class="card-title text-primary">Course: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.course }}</span><br></h5> 
+                    
+                    
+                    <h5 class="card-title text-primary">Course Type: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.course_type }}</span><br></h5> 
+                    
+                    <h5 class="card-title text-primary">Average Score:</span>
+                    
+                    <span style="font-family: 'Open Sans', sans-serif; color: #000000; font-size: 18px;">{{ instructor_info.average_score }}</span>                    
+                </p>
+                <div class="mb-3 d-flex">
+                  <button type="submit"  class="btn btn-primary w-100">
+                      More
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      {% else %}
+        <div class="col-12">
+          <div class="alert alert-warning" role="alert">
+            No student evaluation reports available for the selected term.
+          </div>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endblock %}
