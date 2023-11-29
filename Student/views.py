@@ -163,7 +163,7 @@ def evaluate_course(request, student_id, course_id, instructor_id , course_type)
         return redirect('evaluate')  # Redirect to home or another page
 
     enrollment = StudentCourseEnrollment.objects.get(student=student, course=course, term=term)
-    all_criteria_objects = EvaluationCriteria.objects.get(Evaluator='Student')  # Adjust based on your criteria
+    all_criteria_objects = EvaluationCriteria.objects.get(Evaluator='Student' , Evaluatee = course_type)  # Adjust based on your criteria
     # all_criteria_objects = EvaluationCriteria.objects.all()
     # Collect all distinct criteria sections using Python
     all_criteria_data = all_criteria_objects.Criteria_data.all()

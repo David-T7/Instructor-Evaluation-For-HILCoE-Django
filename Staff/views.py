@@ -69,7 +69,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
     if not term:
         messages.warning(request, 'Course evaluation is already completed for all terms.')
         return redirect('evaluate')  # Redirect to home or another page
-    all_criteria_objects = EvaluationCriteria.objects.get(Evaluator='StaffMember')  # Adjust based on your criteria
+    all_criteria_objects = EvaluationCriteria.objects.get(Evaluator='StaffMember' , Evaluatee = course_type)  # Adjust based on your criteria
     # all_criteria_objects = EvaluationCriteria.objects.all()
     # Collect all distinct criteria sections using Python
     all_criteria_data = all_criteria_objects.Criteria_data.all()
