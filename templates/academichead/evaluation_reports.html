@@ -1,8 +1,11 @@
 {% extends 'academichead/academichead.html' %}
 {% block content %}
   <div class="container mt-4">
-    <h2 class="text-center mb-4">Student Evaluation Reports</h2>
-
+    {% if evaluator == 'both' %}
+    <h2 class="text-center mb-4"> Evaluation Reports</h2>
+    {% else %}
+    <h2 class="text-center mb-4">{{evaluator}} Evaluation Reports</h2>
+    {% endif %}
     <div class="row">
       {% if instructor_data %}
         {% for instructor_info in instructor_data %}
@@ -22,15 +25,21 @@
                     
                     
                     <h5 class="card-title text-primary">Course Type: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.course_type }}</span><br></h5> 
-                    
+                    {% if evaluator == 'both' %}
+                      <h5 class="card-title text-primary">Evaluator: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.current_evaluator }}</span><br></h5>                       
+                      {% endif %}
                     <h5 class="card-title text-primary">Average Score:</span>
+                      
                     
                     <span style="font-family: 'Open Sans', sans-serif; color: #000000; font-size: 18px;">{{ instructor_info.average_score }}</span>                    
                 </p>
-                <div class="mb-3 d-flex">
+                <form method="POST" action="{% url 'morestudnet_evaluation_result' instructor_info.instructor.Instructor_id instructor_info.course.Course_id instructor_info.course_type instructor_info.current_evaluator  %}">
+                  {% csrf_token %}
+                  <div class="mb-3 d-flex">
                   <button type="submit"  class="btn btn-primary w-100">
                       More
                   </button>
+                </form>
                 </div>
               </div>
             </div>
@@ -39,7 +48,7 @@
       {% else %}
         <div class="col-12">
           <div class="alert alert-warning" role="alert">
-            No student evaluation reports available for the selected term.
+            No {{evaluator}} evaluation reports available for the current term.
           </div>
         </div>
       {% endif %}

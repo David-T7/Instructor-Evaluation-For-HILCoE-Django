@@ -11,7 +11,7 @@
                 <div class="text-center">
               <h5 class="card-title">Student Evaluations</h5>
               <p class="card-text">View reports and summaries of student evaluations.</p>
-              <a href="{% url 'student_evaluation_reports' %}" class="btn btn-primary">View Reports</a>
+              <a href="{% url 'student_evaluation_reports' 'Student' %}" class="btn btn-primary">View Reports</a>
               </div>
             </div>
           </div>
@@ -23,7 +23,7 @@
             <div class="text-center">
                 <h5 class="card-title">Staff Evaluations</h5>
                <p class="card-text">Explore staff evaluation results and insights.</p>
-              <a href="#" class="btn btn-primary">View Reports</a>
+              <a href="{% url 'student_evaluation_reports' 'Staff' %}" class="btn btn-primary">View Reports</a>
               </div>
             </div>
           </div>
