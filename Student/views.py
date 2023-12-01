@@ -69,6 +69,7 @@ def Studnets(request):
 def studenthomepage(request):
     student = Student.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(student=student)
+    term  = Term.objects.get(EvaluationDone = False)
     courseinstructors = []    
     # Create dictionaries to store course and instructor data
     courseData = {}
@@ -92,12 +93,14 @@ def studenthomepage(request):
             ]
     for course in courseinstructors:
          print("course instructor to be send is ", course)
+         
     context = {
         'active_page': 'home',
         'studentenrollements': student_enrollments,
         'courseData': json.dumps(courseData),
         'instructorData': json.dumps(instructorData),
-        'courseinstructors':courseinstructors
+        'courseinstructors':courseinstructors,
+        'term':term,
     }
 
     print("coursedata" , courseData  , "instructordata", instructorData)
@@ -167,16 +170,31 @@ def evaluate_course(request, student_id, course_id, instructor_id , course_type)
     # all_criteria_objects = EvaluationCriteria.objects.all()
     # Collect all distinct criteria sections using Python
     all_criteria_data = all_criteria_objects.Criteria_data.all()
+    # print("all criteria data " , all_criteria_data)
     all_criteria = []
     criteria_sections = []
+    desired_order = ['Course Organization', 'Knowledge of the subject matter', 'Teaching Methods',
+                    'Student Involvement', 'Evaluation Methods' , 'Personality Traits' , 'Availability and Support']
     for criteria_object in all_criteria_data:
         criteria = Criteria.objects.get(Criteria_id= criteria_object.Criteria_id) 
         if criteria.Section not in  criteria_sections :
             all_criteria.append(criteria)
             criteria_sections.append(criteria.Section)
-        print("criteria section" , criteria.Section )
-    print("all sectins are ", all_criteria)
+        # print("criteria section" , criteria.Section )
+    print("all criteria data are ", all_criteria)
+    # print("all criteria sections before sort: ", criteria_sections)
+    criteria_sections.sort(key=lambda x: desired_order.index(x.Section))
+    print("after sort criteria sections: ", criteria_sections)
+   
+        
+    criteria_results = {}
+    error_occured = False
     if request.method == 'POST':
+        submitted_data = request.POST.copy()
+        for key, value in submitted_data.items():
+                if key.startswith('criteria_'):
+                    criteria_id = key.replace('criteria_', '')
+                    criteria_results[criteria_id] = value
         evaluation_result = {}
         for criteria in all_criteria_data:
             score = request.POST.get(f'criteria_{criteria.Criteria_id}')
@@ -188,7 +206,7 @@ def evaluate_course(request, student_id, course_id, instructor_id , course_type)
                 evaluated_criteria_descriptions.add(criteria.description)
         # Get all unique criteria descriptions
         all_criteria_descriptions = set(criteria.description for criteria in all_criteria_data)        
-        print("evaluation resullt",evaluation_result)     
+        # print("evaluation resullt",evaluation_result)     
         if evaluation_result and evaluated_criteria_descriptions == all_criteria_descriptions:
             result_instance, created = StudentEvaluationResult.objects.get_or_create(
                 Student_id=student,
@@ -200,21 +218,30 @@ def evaluate_course(request, student_id, course_id, instructor_id , course_type)
             )
 
             if not created:
-                messages.error(request, 'Please evaluate all sections!')
-            messages.success(request, 'You have completed Evaluation for course '+ course.CourseName) 
-            return redirect('evaluate')  # Redirect to home or another page after evaluation
+                messages.error(request, 'Please evaluate all criteria descriptions before submitting!' )
+                error_occured = True
+            else:
+                messages.success(request, 'You have completed Evaluation for course '+ course.CourseName) 
+                return redirect('evaluate')  # Redirect to home or another page after evaluation
         else:
             messages.error(request, 'Please evaluate all criteria descriptions before submitting!')
+            error_occured = True
+
+    
     context = {
         'enrollment': enrollment,
         'criteria_data': all_criteria_data,
         'student':student, 
         'active_page':'evaluation',
         'all_criteria_sections': all_criteria ,
+        'criteria_sections':criteria_sections,
         'instructor':instructor,
         'course_type':course_type,
+        'criteria_results' : criteria_results,
+        'error_occured': error_occured,
+        
     }
-
+    print('criteria result is ', criteria_results )
     return render(request, 'student/evaluate_course.html', context)
     
 def student_evaluation_reports(request , evaluator):

@@ -11,18 +11,20 @@ from Instructor.models import Instructor
 
 
 # Create your views here.
-def Login(request , role):          # function based view for handling user login
+def Login(request):          # function based view for handling user login
     form = CustomUserCreationForm()
+    role = None
     if request.method == 'POST':
         username = request.POST['username'].lower()      # making sure the user name is in lowercase 
         password = request.POST['password1']
         try:
-            user = authenticate(request=request, username=username, password=password , Role =role)   # full user authenticaton including role
+            user = authenticate(request=request, username=username, password=password)   # full user authenticaton including role
             if user is not None:
+                role = user.Role.lower()
                 login(request, user) 
-                if(role.lower() =='student'):
+                if(user.Role.lower() =='student'):
                     return redirect('studenthomepage')  # redircting to other page after login
-                elif(role.lower() =='instructor'):
+                elif(user.Role.lower() =='instructor'):
                     return redirect('instructorhomepage')  # redircting to other page after login
                 elif(user.Role.lower() =='staffmember'):
                     print("in staff")
@@ -45,10 +47,10 @@ def Login(request , role):          # function based view for handling user logi
 
 
 def Logout(request):
-    logred = '/login/' + request.user.Role  # getting the redirection path for every role
+    logred = '/login'  # getting the redirection path for every role
     logout(request)
     messages.info(request, 'Successfuly Logged out!')    
-    return redirect(logred.lower())
+    return redirect(logred)
 
 def Userstate(request):  # for getting the state of the user 
     state = request.user

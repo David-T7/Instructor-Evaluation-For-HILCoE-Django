@@ -1,6 +1,5 @@
 {% extends 'student/student.html' %}
 {% block content %}
-  <div class="container mt-4">
     {% for message in messages %}
 <div class="container-fluid p-0">
   <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
@@ -13,26 +12,36 @@
 {% endfor %}
     <h2 class="text-center text-uppercase font-weight-bold">{{ term.Season }} {{ term.Year }} Enrolled Courses</h2>
 
-    {% if course_instructors %}
+    {% if  course_instructors %}
       <div class="row">
         {% for course in course_instructors %}
-          <div class="col-md-4 mb-4">
-            <div class="card">
-              <div class="card-body">
-                <div class="text-center">
-                <h3 class="card-title text-primary">{{ course.Course.CourseName }} ({{ course.Course.Course_id }}) {{course.CourseType}}</h3>
-                
-                  {% if course.Instructors.ProfilePic %}
-                  <img src="{{ course.Instructors.ProfilePic.url }}" alt="{{ instructor.FirstName }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
-                  {% endif %}
-                  <h4 class="mb-3">Instructor: {{ course.Instructors.Title }} {{ course.Instructors.FirstName }} {{ course.Instructors.LastName }} </h4>
-                  <div class="mb-3 d-md-flex">
-                    {% if course.Instructors.Instructor_id in evaluated_instructors and course.CourseType in evaluated_courses_types %}
-                    <a href="#" class="btn btn-primary w-100 max-width-300 disabled">Evaluated</a>
-                    {% else %} 
-                    <a href="{% url 'evaluate_course' student.Student_id course.Course.Course_id course.Instructors.Instructor_id course.CourseType %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
-                    {% endif %}                 
-                   </div>
+        <div class="col-md-4 mb-4">
+          <div class="text-center">
+        {% if course.Instructors.Instructor_id in evaluated_instructors and course.CourseType in evaluated_courses_types %}
+        <div class="card border-success mb-3" style="max-width: 18rem;">
+        {% else %} 
+        <div class="card border-primary mb-3" style="max-width: 18rem;">
+        {% endif %}
+               
+        <div class="card-header">{{ course.Course.CourseName }} ({{ course.Course.Course_id }}) {{course.CourseType}}</div>
+        {% if course.Instructors.Instructor_id in evaluated_instructors and course.CourseType in evaluated_courses_types %}  
+      <div class="card-body text-success">
+        {% else %}
+        <div class="card-body text-primary">
+          {% endif %}
+          <p class="card-text">
+            {% if course.Instructors.ProfilePic %}
+            <img src="{{ course.Instructors.ProfilePic.url }}" alt="{{ instructor.FirstName }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
+            {% endif %}
+          </p>
+          <h5 class="card-title">{{ course.Instructors.Title }} {{ course.Instructors.FirstName }} {{ course.Instructors.LastName }}</h5>
+          <div class="mb-3 d-md-flex">
+            {% if course.Instructors.Instructor_id in evaluated_instructors and course.CourseType in evaluated_courses_types %}
+            <a href="#" class="btn btn-success w-100 max-width-300 disabled">Evaluated</a>
+            {% else %} 
+            <a href="{% url 'evaluate_course' student.Student_id course.Course.Course_id course.Instructors.Instructor_id course.CourseType %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
+              {% endif %}                 
+           </div>
                 </div>
                 
               </div>
@@ -41,7 +50,6 @@
         {% endfor %}
       </div>
     {% else %}
-      <p class="text-muted text-center">No enrolled courses for the selected term.</p>
+      <p class="text-muted text-center">No enrolled courses for the  term.</p>
     {% endif %}
-  </div>
 {% endblock %}

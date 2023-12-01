@@ -1,11 +1,8 @@
 {% load widget_tweaks %}
-<br>
-<section class="h-100">
-  <div class="container h-100">
     <div class="row justify-content">
       <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
-        <div class="card shadow-lg">
-          <div class="card-body p-5">
+        <div class="card border-primary mb-3 col-md-10" style="max-width: 80rem;"> 
+        <div class="card-body p-5">
             <h3 class="fw-normal mb-4" style="color: rgb(19, 92, 230)">Edit Account</h3>
             <form method="POST" enctype="multipart/form-data">
               {% csrf_token %}
@@ -50,7 +47,5 @@
         </div>
       </div>
     </div>
-  </div>
-</section>
 </div>
 <br>

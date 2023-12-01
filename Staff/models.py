@@ -29,6 +29,7 @@ class StaffEvaluationResult(models.Model):
     CourseType = models.CharField(max_length=20 , null=True , blank=True)
     Term_id = models.ForeignKey(Term , on_delete=models.CASCADE)
     EvaluationResult = models.JSONField()
+    AdditionalComment =  models.TextField(null=True , blank=True)
     EvaluationDone = models.BooleanField(default=False , null=True)    
     class Meta:
         # Add a unique constraint to ensure a student can evaluate a course only once

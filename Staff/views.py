@@ -9,7 +9,8 @@ from django.contrib import  messages
 def stafflandingpage(request): 
     return render(request , 'stafflandingpage.html')
 def staffHomePage(request):
-    context = { 'active_page': 'home',}
+    term  = Term.objects.get(EvaluationDone = False)
+    context = { 'active_page': 'home', 'term':term}
     return render(request , 'staff/staffhome.html' , context)
 
 def staff_evaluate_page(request):
@@ -69,7 +70,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
     if not term:
         messages.warning(request, 'Course evaluation is already completed for all terms.')
         return redirect('evaluate')  # Redirect to home or another page
-    all_criteria_objects = EvaluationCriteria.objects.get(Evaluator='StaffMember' , Evaluatee = course_type)  # Adjust based on your criteria
+    all_criteria_objects = EvaluationCriteria.objects.get(Evaluator='StaffMember')  # Adjust based on your criteria
     # all_criteria_objects = EvaluationCriteria.objects.all()
     # Collect all distinct criteria sections using Python
     all_criteria_data = all_criteria_objects.Criteria_data.all()
@@ -82,7 +83,14 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
             criteria_sections.append(criteria.Section)
         print("criteria section" , criteria.Section )
     print("all sectins are ", all_criteria)
+    criteria_results = {}
+    error_occured = False
     if request.method == 'POST':
+        submitted_data = request.POST.copy()
+        for key, value in submitted_data.items():
+                if key.startswith('criteria_'):
+                    criteria_id = key.replace('criteria_', '')
+                    criteria_results[criteria_id] = value
         evaluation_result = {}
         for criteria in all_criteria_data:
             score = request.POST.get(f'criteria_{criteria.Criteria_id}')
@@ -94,7 +102,8 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
                 evaluated_criteria_descriptions.add(criteria.description)
         # Get all unique criteria descriptions
         all_criteria_descriptions = set(criteria.description for criteria in all_criteria_data)        
-        print("evaluation resullt",evaluation_result)     
+        print("evaluation resullt",evaluation_result)
+        additional_comment = request.POST.get('additional_comment')     
         if evaluation_result and evaluated_criteria_descriptions == all_criteria_descriptions:
             result_instance, created = StaffEvaluationResult.objects.get_or_create(
                 Staff_id=staff,
@@ -102,15 +111,20 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
                 Instructor_id=instructor,
                 CourseType = course_type,
                 Term_id=term,
+                AdditionalComment = additional_comment, 
                 defaults={'EvaluationResult': evaluation_result, 'EvaluationDone': True}
             )
 
             if not created:
-                messages.error(request, 'Please evaluate all sections!')
-            messages.success(request, 'You have completed Evaluation for course '+ course.CourseName) 
-            return redirect('evaluate_staff')  # Redirect to home or another page after evaluation
+                messages.error('Please evaluate all criteria descriptions before submitting!')
+                error_occured = True
+            else:
+                messages.success(request, 'You have completed Evaluation for course '+ course.CourseName) 
+                return redirect('evaluate_staff')  # Redirect to home or another page after evaluation
         else:
             messages.error(request, 'Please evaluate all criteria descriptions before submitting!')
+            error_occured = True
+
     context = {
         'course':course,
         'criteria_data': all_criteria_data, 
@@ -118,6 +132,8 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
         'all_criteria_sections':all_criteria ,
         'instructor':instructor,
         'course_type':course_type,
+        'criteria_results' : criteria_results,
+        'error_occured'  :error_occured,
     }
 
     return render(request, 'staff/evaluate_course.html', context)
