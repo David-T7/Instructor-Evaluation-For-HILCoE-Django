@@ -298,19 +298,84 @@ def student_evaluation_reports(request , evaluator):
                     'course': course,
                     'course_type': course_type,
                     'average_score': total_avg_score.__round__(2),
-                    'current_evaluator':current_evaluator,
+                    'current_evaluator':str.title(current_evaluator),
                     })
             
 
-    context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':evaluator}
+    context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':str.title(evaluator)}
     print("instructor infor ",instructor_data)
     return render(request, 'academichead/evaluation_reports.html', context)    
+    
+
+def total_evaluation_reports(request):
+    # Retrieve all unique instructors evaluated by students for the term
+    courses = Course.objects.all()
+
+    # Prepare a list to store instructor information with average scores
+    instructor_data = []
+    # Iterate through instructors and calculate average scores
+    for course_type in ['Lecture', 'Lab']:
+        for course in courses:
+            total_avg_score = 0
+            instructor = None
+            evaluations = []
+            student_evaluations = StudentEvaluationResult.objects.filter(
+                    Course_id =course,
+                    Term_id=Term.objects.last(),
+                    EvaluationDone=True ,
+                    CourseType = course_type
+                    )
+            staff_evaluations =  StaffEvaluationResult.objects.filter(
+                    Course_id =course,
+                    Term_id=Term.objects.last(),
+                    EvaluationDone=True ,
+                    CourseType = course_type
+                    )
+            if(student_evaluations.__len__()>0):evaluations.append(student_evaluations)
+            if(staff_evaluations.__len__()>0):evaluations.append(staff_evaluations)
+            print('evaluations are ', evaluations.__len__() , evaluations)
+            
+            current_evaluator = None
+            if (evaluations):
+                for evaluationitem in evaluations:
+                    for evaluation in evaluationitem: 
+                        if evaluation:
+                            if not current_evaluator:
+                                if StudentEvaluationResult.objects.filter(Result_id =evaluation.Result_id):current_evaluator='student'
+                                else: current_evaluator='staff' 
+                            if not instructor:
+                                instructor = evaluation.Instructor_id
+                            avg_score = 0
+                            length = 0
+                            # Extract values from the EvaluationResult JSON field
+                            for category, sub_dict in evaluation.EvaluationResult.items():
+                                for criterion, score in sub_dict.items():
+                                    if isinstance(score, (int, float)):
+                                        length+=1
+                                        avg_score += score
+                            avg_score/= length
+                            total_avg_score += avg_score
+                            print("average score is " , avg_score)
+                            # Append instructor information to the list
+                total_avg_score/=evaluations.__len__()
+                instructor_data.append({
+                        'instructor': instructor,
+                        'course': course,
+                        'course_type': course_type,
+                        'average_score': (total_avg_score).__round__(2),
+                        })
+            
+
+    context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':'Both','total':'yes'}
+    print("instructor infor ",instructor_data)
+    return render(request, 'academichead/evaluation_reports.html', context)    
+
     
 def moreStudentEvaluationDetails(request , instructor_id , course_id , course_type , evaluator):
     instructor = Instructor.objects.get(Instructor_id = instructor_id)
     course = Course.objects.get(Course_id  = course_id)
     evaluation = None
-    if evaluator == 'student':
+    if evaluator == 'Student':
         evaluations = StudentEvaluationResult.objects.filter(
                 Course_id =course,
                 Term_id=Term.objects.last(),
@@ -318,7 +383,7 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
                 CourseType = course_type,
                 Instructor_id = instructor
                     )
-    elif evaluator == 'staff':
+    elif evaluator == 'Staff':
             evaluations = StaffEvaluationResult.objects.filter(
                 Course_id =course,
                 Term_id=Term.objects.last(),
@@ -371,6 +436,9 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
     return render(request, 'academichead/moreevaluationdetials.html', context)    
 
 def search_evaluation(request):
+    terms = Term.objects.all()
+    instructors = Instructor.objects.all()
+    courses = Course.objects.all()
     if request.method == 'POST':
         print("in post before evaluting form")
         form = EvaluationSearchForm(request.POST)
@@ -436,7 +504,7 @@ def search_evaluation(request):
                         'course': course,
                         'course_type': course_type,
                         'average_score': total_avg_score.__round__(2),
-                        'current_evaluator':current_evaluator
+                        'current_evaluator':str.title(current_evaluator)
                         })
             else:
                 print("evaluation list not found")
@@ -444,13 +512,14 @@ def search_evaluation(request):
                 return redirect('search_evaluation')
 
                 
-            context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':evaluator}
+            context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':str.title(evaluator)}
         print("instructor infor ",instructor_data)
         return render(request, 'academichead/evaluation_reports.html', context)
 
     else:
         form = EvaluationSearchForm()
         print("in get")
-        return render(request, 'academichead/evaluation_search.html', {'form': form , 'active_page':'report',})            
+        context = {'form': form , 'active_page':'report', 'terms':terms , 'courses':courses , 'instructors':instructors}
+        return render(request, 'academichead/evaluation_search.html', context)            
     
 

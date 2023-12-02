@@ -1,10 +1,12 @@
 {% extends 'academichead/academichead.html' %}
 {% load widget_tweaks %}
+  {% load static %}
 {% block content %}
-<div class="container mt-4">
-  <div class="row justify-content-sm-center h-100">
-    <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
-  <div class="text-center">
+<br>
+<div class="row justify-content-center">
+  <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+    <div class="card border-primary mb-3 col-md-10" style="max-width: 80rem;"> 
+    <div class="card-body p-5">
     {% for message in messages %}
     <div class="container-fluid p-0">
       <div class="alert {{ message.tags }} alert-dismissible" role="alert" >
@@ -15,30 +17,68 @@
       </div>
     </div>
     {% endfor %}
-    <h2>Search for Evaluations</h2>
-    <form method="POST" action="{% url 'search_evaluation' %}" class="row g-3 justify-content-center">
+
+      <h3 class="fw-normal mb-4" style="color: rgb(19, 92, 230)">Search Evaluation</h3>    
+      <form method="POST" action="{% url 'search_evaluation' %}" class="row g-3 justify-content-center">
       {% csrf_token %}
-      <div class="card shadow-0">
-        <div class="card-body p-5">
       <div class="mb-3">
         <div class="form-floating">
-          {% render_field form.Term_id id="term" class="form-control" placeholder="Term" name="term" %}
-          <label for="floatingPassword">Term</label>
+      <input id="term" class="form-control" placeholder="Term" name="term">
+      <label for="floatingPassword">Term</label>
+
+      <script> 
+        $( function() { 
+          var availableTags = [ 
+              {% for term in terms %} 
+                  "{{term}}", 
+              {% endfor %} 
+          ]; 
+          $("#term" ).autocomplete({ 
+            source: availableTags 
+          }); 
+        } ); 
+        </script> 
         </div>
       </div>
 
       <div class="mb-3">
         <div class="form-floating">
-          {% render_field form.Course_id id="course" class="form-control" placeholder="Course" name="course" %}
-          <label for="floatingPassword">Course</label>
+      <input id="course" class="form-control" placeholder="Course" name="course">
+      <label for="floatingPassword">Course</label>
+
+      <script> 
+        $( function() { 
+          var availableTags = [ 
+              {% for course in courses %} 
+                  "{{course}}", 
+              {% endfor %} 
+          ]; 
+          $("#course" ).autocomplete({ 
+            source: availableTags 
+          }); 
+        } ); 
+        </script> 
         </div>
       </div>
 
+
       <div class="mb-3">
         <div class="form-floating">
-          {% render_field form.Instructor_id id="instructor_name" class="form-control" placeholder="Instructor" name="instructor_name" %}
-          <label for="floatingPassword">Instructor</label>
-       </div>
+      <input id="instructor" class="form-control" placeholder="Instructor" name="instructor">
+      <label for="floatingPassword">Instructor</label>
+      <script> 
+        $( function() { 
+          var availableTags = [ 
+              {% for instructor in instructors %} 
+                  "{{instructor}}", 
+              {% endfor %} 
+          ]; 
+          $("#instructor" ).autocomplete({ 
+            source: availableTags 
+          }); 
+        } ); 
+        </script> 
+        </div>
       </div>
 
        <div class="mb-3">

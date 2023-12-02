@@ -1,38 +1,38 @@
 {% extends 'academichead/academichead.html' %}
 {% block content %}
-  <div class="container mt-4">
-    {% if evaluator == 'both' %}
-    <h2 class="text-center mb-4"> Evaluation Reports</h2>
+    {% if evaluator == 'Both' %}
+    <h2 class="text-center mb-4"> Evaluation Report</h2>
     {% else %}
-    <h2 class="text-center mb-4">{{evaluator}} Evaluation Reports</h2>
+    <h2 class="text-center mb-4">{{evaluator}} Evaluation Report</h2>
     {% endif %}
     <div class="row">
       {% if instructor_data %}
         {% for instructor_info in instructor_data %}
-          <div class="col-md-4 mb-4">
-            <div class="card">
-              <div class="card-body">
+        <div class="col-md-4 mb-4">
+          <div class="text-center">
+        <div class="card border-primary mb-3" style="max-width: 18rem;">
+          <div class="card-header"> {{ instructor_info.course }} {{ instructor_info.course_type }} </div>
                 {% if instructor_info.instructor.ProfilePic %}
                  <div class="text-center">
                   <img src="{{ instructor_info.instructor.ProfilePic.url }}" alt="{{ instructor.FirstName }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
                  </div>
                   {% endif %}
-                  <div class="text-center">
-                <h4 class="card-title text-primary">{{ instructor_info.instructor.Title }} {{ instructor_info.instructor.FirstName }} {{ instructor_info.instructor.LastName }}</h4>
-              </div>
+                  <div class="card-body text-primary">
+                <h5>{{ instructor_info.instructor.Title }} {{ instructor_info.instructor.FirstName }} {{ instructor_info.instructor.LastName }}</h5>
                 <p class="card-text">
-                    <h5 class="card-title text-primary">Course: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.course }}</span><br></h5> 
-                    
-                    
-                    <h5 class="card-title text-primary">Course Type: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.course_type }}</span><br></h5> 
-                    {% if evaluator == 'both' %}
-                      <h5 class="card-title text-primary">Evaluator: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.current_evaluator }}</span><br></h5>                       
+                  {% if total == 'yes' %}
+                  <h5>Total Average Score:</span>
+                    <span style="font-family: 'Open Sans', sans-serif; color: #000000; font-size: 18px;">{{ instructor_info.average_score }}</span>                    
+                  {% else %}
+                  {% if evaluator == 'Both' %}
+                      <h5>Evaluator: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.current_evaluator }}</span><br></h5>                       
                       {% endif %}
-                    <h5 class="card-title text-primary">Average Score:</span>
-                      
                     
+                    <h5>Average Score:</span>
                     <span style="font-family: 'Open Sans', sans-serif; color: #000000; font-size: 18px;">{{ instructor_info.average_score }}</span>                    
                 </p>
+                {% endif %}
+                {% if total != 'yes' %}
                 <form method="POST" action="{% url 'morestudnet_evaluation_result' instructor_info.instructor.Instructor_id instructor_info.course.Course_id instructor_info.course_type instructor_info.current_evaluator  %}">
                   {% csrf_token %}
                   <div class="mb-3 d-flex">
@@ -41,9 +41,11 @@
                   </button>
                 </form>
                 </div>
+                {% endif %}
               </div>
             </div>
           </div>
+    </div>
         {% endfor %}
       {% else %}
         <div class="col-12">
