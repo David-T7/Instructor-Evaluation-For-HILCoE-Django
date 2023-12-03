@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm
-from Course.models import Batch, Course, Term
+from Course.models import  Course, Term
 from Instructor.models import Instructor
 
 from Student.models import Student
