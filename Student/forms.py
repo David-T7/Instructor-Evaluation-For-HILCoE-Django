@@ -9,7 +9,10 @@ evaluatorchoice = [
     ( None, '---------'),
     ('Student', 'Student'),
     ('Staff', 'Staff'),
-    ('Both' , 'Both')
+    ('Both' , 'Both'),
+    ('Total' , 'Total'),
+    
+    
 ]
 
 class StudentCreationForm(ModelForm):
