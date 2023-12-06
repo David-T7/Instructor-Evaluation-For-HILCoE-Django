@@ -1,0 +1,56 @@
+{% if sender == 'totalreport' %}
+<div class="text-center">
+    <div class="card-body text-primary">
+        <h1 class="text-center mb-1">{{ evaluator }} {{ course_type }} Instructors Evaluation Report {% if term %}({{ term }}){% endif %}</h1>
+    </div>
+    <h2>Here is the average result of all instructors' evaluation results:</h2>
+{% elif sender == 'instructorreport' %}
+
+    <div class="text-center">
+        <div class="card-body text-primary">
+       <h2 class="text-center mb-4">Detailed {{evaluator}} Evaluation Report {% if term %}({{term}}) {% endif %}</h2>
+       </div>
+     </div>
+         {% if instructor.ProfilePic %} 
+         <div class="text-center">
+     
+         <img src="{{ instructor.ProfilePic.url }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
+         </div>
+         {% endif %}
+         <div class="text-center">
+         <h2 class="card-title text-primary">Instructor: {{ instructor.Title }}{{ instructor.FirstName }}{{ instructor.LastName }}</h2>
+         <h2 class="card-title text-primary">Course: {{ course.CourseName }} ({{course.Course_id}}) {{course_type}}</h2>
+         <h2>Here is the average result of the all evaluation criterias </h2>
+{% endif %}
+    <table class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th class="text-center" style="background-color: rgb(181, 206, 253); width: 50%; border-right: 1px solid #fff;"><h1>Criteria</h1></th>
+                <th class="text-center" style="background-color: rgb(181, 206, 253); width: 30%"><h1>Average Score(5)</h1></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for section in criteria_sections %}
+            <tr>
+                <td class="bg text-white font-weight-bold text-center"
+                    style="background-color: rgb(75, 130, 233); text-align: center;"> <h2> {{ section }} </h2></td>
+                <td class="bg text-white font-weight-bold text-center"
+                style="background-color: rgb(75, 130, 233);">&nbsp;</td>
+            </tr>
+            {% for criteria_score in criteria_average_Scores %}
+            {% if criteria_score.category == section %}
+            <tr>
+                <td class="text-center" style="background-color: rgb(181, 206, 253); border-right: 1px solid #fff; text-align: center;">
+                    <h2 style="font-weight: normal;">{{ criteria_score.criteria }}</h2>
+                </td>
+            <td class="text-center" style="background-color: rgb(181, 206, 253); text-align: center;"><h2 style="font-weight: normal;">{{ criteria_score.score }}</h2></td>
+            </tr>
+            <tr>
+                <td colspan="2" style="background-color: rgb(181, 206, 253); border-right: 1px solid"><hr></td>
+            </tr>
+            {% endif %}
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</div>

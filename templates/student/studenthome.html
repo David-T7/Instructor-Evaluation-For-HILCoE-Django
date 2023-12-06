@@ -2,8 +2,6 @@
 {% load static %}
 {% block content %}
 
-
-
 <!-- Content Section -->
 <div class="text-center">
     <div class="row justify-content-center">
@@ -16,10 +14,22 @@
                               {% if not term %}
                               <p class="card-text">We're thrilled to have you on board. Your contribution is invaluable in shaping the educational experience at HILCoE.</p>
                               {% else %}
+                              {% if evaluation_started == True and evaluation_ended == False %}
                               <div class="card-body text-danger">
-                              <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has started don't forget to evaluate.
+                              <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has started don't forget to evaluate before {{term.Evaluation_End_Date}}.
                               </p>  
-                              </div>              
+                              </div>
+                              {% elif evaluation_started == True and evaluation_ended == True  %}
+                              <div class="card-body text-danger">
+                                <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has ended !.
+                                </p>  
+                                </div>
+                              {% elif evaluation_started == False %}
+                              <div class="card-body text-danger">
+                                <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has not started !.
+                                </p>  
+                                </div>
+                            {% endif %}             
                               {% endif %}                          
         <!-- Enrolled Courses Section -->
                     <h6 class="text-muted">Evaluation Rules</h6>
@@ -53,8 +63,10 @@
                 </div>
         </div>
     </div> -->
+    {% if evaluation_started == True and evaluation_ended == False  %}
     <a href="{% url 'evaluate' %}" class="btn btn-outline-primary course-btn">Start Evaluation</a>
      <br><br>
+     {% endif %}
     {% endif %}
                         
                 </div>

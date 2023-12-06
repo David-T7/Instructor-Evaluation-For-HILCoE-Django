@@ -19,9 +19,14 @@ class Student(models.Model):
                           primary_key=True)
     Account_id = models.OneToOneField(Account , on_delete=models.CASCADE ,null=True , blank=True)
     Department = models.CharField(max_length=20 , choices=departmentchoice , null=True , blank=True)
-    Batch = models.OneToOneField(Batch , on_delete=models.CASCADE ,null=True , blank=True)
+    Batch = models.ForeignKey(Batch , on_delete=models.CASCADE ,null=True , blank=True)
+    class Meta:
+        # Add a unique constraint to ensure a student can evaluate a course only once
+        unique_together = ('Student_id', 'Batch')
+    
     def __str__(self):
         return str(self.Student_id)
+    
 
 class StudentEvaluationResult(models.Model):
     Result_id = models.UUIDField(default=uuid.uuid4, unique=True, primary_key=True, editable=False)

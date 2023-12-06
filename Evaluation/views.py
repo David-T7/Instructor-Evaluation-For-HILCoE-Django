@@ -1,3 +1,44 @@
-from django.shortcuts import render
+# from django.shortcuts import render
+# from io import BytesIO
+# from django.http import HttpResponse
+# from django.template.loader import get_template
+# from django.views import View
+# from xhtml2pdf import pisa
 
-# Create your views here.
+# def render_to_pdf(template_src, context_dict={}):
+# 	template = get_template(template_src)
+# 	html  = template.render(context_dict)
+# 	result = BytesIO()
+# 	pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+# 	if not pdf.err:
+# 		return HttpResponse(result.getvalue(), content_type='application/pdf')
+# 	return None
+
+
+# data = {
+# 	"company": "Dennnis Ivanov Company",
+# 	"address": "123 Street name",
+# 	"city": "Vancouver",
+# 	"state": "WA",
+# 	"zipcode": "98663",
+
+
+# 	"phone": "555-555-2345",
+# 	"email": "youremail@dennisivy.com",
+# 	"website": "dennisivy.com",
+# 	}
+
+# #Opens up page as PDF
+# def ViewPDF(request,templatename,directory , data):
+# 		pdf = render_to_pdf(directory+'/'+templatename, data)
+# 		return HttpResponse(pdf, content_type='application/pdf')
+
+
+# #Automaticly downloads to PDF file
+# def DownloadPDF(templatename , data , filename):
+# 		pdf = render_to_pdf(templatename, data)
+# 		response = HttpResponse(pdf, content_type='application/pdf')
+# 		content = "attachment; filename='%s'" %(filename)
+# 		response['Content-Disposition'] = content
+# 		return response
+

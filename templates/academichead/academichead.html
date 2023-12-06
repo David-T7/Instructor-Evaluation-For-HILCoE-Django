@@ -3,7 +3,7 @@
 {% block content1 %}
   <div class="side-navbar active-nav d-flex justify-content-between flex-wrap flex-column" id="sidebar">
     <ul class="nav flex-column text-white w-100">
-      <a href="#" class="nav-link h3 text-white my-2">
+      <a href="{% url 'academicheadhomepage' %}" class="nav-link h3 text-white my-2">
         Academic Head
       </a>
       <li class="nav-link {% if active_page == 'home' %}active{% endif %}">
@@ -11,8 +11,12 @@
         <span class="mx-2"><a class="inner-anchor" href="{% url 'academicheadhomepage' %}"> Home</a></span>
       </li>
       <li class="nav-link {% if active_page == 'report' %}active{% endif %}">
+        <iconify-icon icon="bx:bar-chart-alt-2"></iconify-icon>
+        <span class="mx-2"><a class="inner-anchor" href="{% url 'search_evaluation' %}">Result</a></span>
+      </li>
+      <li class="nav-link {% if active_page == 'general_report' %}active{% endif %}">
         <i class="bx bx-git-pull-request"></i>
-        <span class="mx-2"><a class="inner-anchor" href="{% url 'search_evaluation' %}">Report</a></span>
+        <span class="mx-2"><a class="inner-anchor" href="{% url 'general_evaluation_report' 'view' %}">Report</a></span>
       </li>
       <li class="nav-link {% if active_page == 'editaccount' %}active{% endif %}">
         <i class="bx bx-edit"></i>

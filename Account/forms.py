@@ -17,3 +17,7 @@ class CustomUserChangeForm(forms.ModelForm):
     class Meta:
         model = Account
         fields = ['username']
+class CustomEmailChangeForm(forms.ModelForm):
+    class Meta:
+        model = Account
+        fields = ['email']

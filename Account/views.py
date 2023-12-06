@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render
 from django.contrib.auth import login, authenticate, logout
 from Account.models import Account
-from Account.forms import CustomUserChangeForm, CustomUserCreationForm
+from Account.forms import CustomUserChangeForm, CustomUserCreationForm , CustomEmailChangeForm
 from django.contrib import  messages
 from django.contrib.auth.forms import PasswordChangeForm 
 from django.contrib.auth import update_session_auth_hash
@@ -21,6 +21,7 @@ def Login(request):          # function based view for handling user login
             user = authenticate(request=request, username=username, password=password)   # full user authenticaton including role
             if user is not None:
                 role = user.Role.lower()
+                print('passed')
                 login(request, user) 
                 if(user.Role.lower() =='student'):
                     return redirect('studenthomepage')  # redircting to other page after login
@@ -33,7 +34,13 @@ def Login(request):          # function based view for handling user login
                     print("in academic")
                     return redirect('academicheadhomepage')  # redircting to other page after login
             else:
-                login(request, user , backend='django.contrib.auth.backends.ModelBackend')
+                try:
+                    print("in try")
+                    testusername = Account.objects.get(username = username)
+                    messages.error(request, 'Incorrect Password')
+                except:
+                    print("in exception")
+                    messages.error(request, 'Username does not exist')
                 
         except:
             try:
@@ -90,6 +97,29 @@ def EditUserName(request):
     elif(request.user.Role.lower() == 'academichead'):
         return render(request, 'academichead/editusername_password.html', context)
    
+def addRecoveryEmail(request):
+    state = request.user # hodling the state of the user
+    account = Userstate(request)['account']
+    instructor=getInstructor(request)
+    form= CustomEmailChangeForm(instance=state)  # using form created in forms.py
+    if request.method == 'POST':
+        form = CustomEmailChangeForm(request.POST, instance=state)
+        if (form.is_valid()):
+            try:
+                form.save()
+                messages.success(request,'Recovery Email added successfuly')
+            except:
+                None
+        request.user.save() # saving the state of the user after it is updated 
+    context = {'form': form , 'account':account , 'sender':'username' , 'instructor':instructor}
+    if(request.user.Role.lower() == 'student'):
+        return render(request, 'student/editusername_password.html', context)
+    elif(request.user.Role.lower() == 'instructor'):
+        return render(request, 'instructor/editusername_password.html', context)
+    elif(request.user.Role.lower() == 'staffmember'):
+        return render(request, 'staff/editusername_password.html', context)
+    elif(request.user.Role.lower() == 'academichead'):
+        return render(request, 'academichead/editusername_password.html', context)
 
 def EditPassword(request):
     account = Userstate(request)['account']

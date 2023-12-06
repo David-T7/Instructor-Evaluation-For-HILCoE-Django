@@ -10,9 +10,13 @@
   </div>
 </div>
 {% endfor %}
-    <h2 class="text-center text-uppercase font-weight-bold">{{ term.Season }} {{ term.Year }} Enrolled Courses</h2>
-
+    {% if term %}
+    {% if evaluation_started == True and evaluation_ended == False %}
     {% if  course_instructors %}
+    <div class="card-body text-danger text-center">
+      <h5 class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has started don't forget to evaluate before {{term.Evaluation_End_Date}}.
+      </h5>
+    </div>  
       <div class="row">
         {% for course in course_instructors %}
         <div class="col-md-4 mb-4">
@@ -50,6 +54,29 @@
         {% endfor %}
       </div>
     {% else %}
-      <p class="text-muted text-center">No enrolled courses for the  term.</p>
+    <div class="alert alert-warning" role="alert">
+      <p>No enrolled courses for the  term.</p>
+    </div>
+    {% endif %}
+    
+    {% elif evaluation_started == True and evaluation_ended == True  %}
+    <div class="col-12">
+      <div class="alert alert-warning" role="alert">
+         Evaluation has ended strated for the term  {{ term.Season }} {{ term.Year }}.
+       </div>
+    </div>
+    {% elif evaluation_started == False %}
+    <div class="col-12">
+      <div class="alert alert-warning" role="alert">
+         Evaluation has not strated for the term  {{ term.Season }} {{ term.Year }}.
+       </div>
+    </div>
+    {% endif %}
+    {% else %}
+    <div class="col-12">
+      <div class="alert alert-warning" role="alert">
+         Evaluation has not strated please wait!.
+       </div>
+    </div>
     {% endif %}
 {% endblock %}

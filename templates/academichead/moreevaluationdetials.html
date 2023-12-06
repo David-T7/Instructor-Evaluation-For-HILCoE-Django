@@ -1,22 +1,27 @@
 {% extends 'academichead/academichead.html' %}
 {% load static %}
 {% block content %}
-    {% if instructor.ProfilePic %}
-    <h2 class="text-center mb-4">Detailed {{evaluator}} Evaluation Report</h2>
+<div class="text-center">
+   <div class="card-body text-primary">
+  <h2 class="text-center mb-4">Detailed {{evaluator}} Evaluation Report {% if term %}({{term}}) {% endif %}</h2>
+  </div>
+</div>
+    {% if instructor.ProfilePic %} 
     <div class="text-center">
+
     <img src="{{ instructor.ProfilePic.url }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
     </div>
     {% endif %}
     <div class="text-center">
     <h4 class="card-title text-primary">Instructor: {{ instructor.Title }}{{ instructor.FirstName }}{{ instructor.LastName }}</h3>
-    <h4 class="card-title text-primary">Course: {{ evaluation.Course_id.CourseName }} ({{evaluation.Course_id.Course_id}}) {{evaluation.CourseType}}</h3>
-    <b>Here is the result of the aggregate evaluation </b>
+    <h4 class="card-title text-primary">Course: {{ course.CourseName }} ({{course.Course_id}}) {{course_type}}</h3>
+    <b>Here is the average result of the all evaluation criterias </b>
     <div>
       <table class="table table-bordered">
         <thead class="thead-dark">
           <tr>
             <th class="text-center" style="background-color:rgb(181, 206, 253);width: 50%">Criteria</th>
-            <th class="text-center" style="background-color:rgb(181, 206, 253);width: 50%">Average Score</th>
+            <th class="text-center" style="background-color:rgb(181, 206, 253);width: 50%">Average Score(5)</th>
           </tr>
         </thead>
         <tbody>
@@ -25,7 +30,8 @@
           <tr>
             <td colspan="3" class="bg text-white font-weight-bold text-center " style="background-color:rgb(75, 130, 233) ;">{{ section }}</td>
           </tr>
-          {% for criteria_score in criteria_average_Scores %}
+         {{criteria_sections}}          
+         {% for criteria_score in criteria_average_Scores %}
           {% if criteria_score.category == section %}
               <tr>
                 <td style="background-color:rgb(181, 206, 253) ;">{{ criteria_score.criteria }}</td>
@@ -37,5 +43,16 @@
         </tbody>
       </table>
     </form> 
+    <div class="text-center">
+      <!-- ... existing content ... -->
+  
+      <!-- Save as PDF button -->
+      <form action="{% url 'viewpdf' %}" method="POST" class="mt-4">
+          {% csrf_token %}
+          {{ form.as_p }}
+          <button type="submit" class="btn btn-primary">Save as PDF</button>
+      </form>
+  </div>
+  </div>
   </div>
 {% endblock %}

@@ -5,7 +5,7 @@ from Account.models import StudentInfo , Account
 from Evaluation.models import Criteria, CriteriaSection, EvaluationCriteria
 from Instructor.models import Instructor
 from Staff.models import StaffEvaluationResult
-from .forms import EvaluationSearchForm, StudentCreationForm
+from .forms import EvaluationSearchForm, PDFDownloadForm, StudentCreationForm
 from django.contrib import  messages
 from django.shortcuts import redirect, render
 from .models import Student , StudentCourseEnrollment, StudentEvaluationResult
@@ -15,6 +15,13 @@ from django.db.models import F, Func, Value
 from django.db.models.functions import Cast
 from django.db import models
 from django.db.models import Q
+from django.utils import timezone
+from django.http import HttpResponse
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template
+from django.views import View
+from xhtml2pdf import pisa
 
 
 
@@ -69,7 +76,20 @@ def Studnets(request):
 def studenthomepage(request):
     student = Student.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(student=student)
-    term  = Term.objects.get(EvaluationDone = False)
+    term = None
+    try:
+        term = Term.objects.get(EvaluationDone = False)
+    except:
+        term = None
+    evaluation_started = False
+    evaluation_ended = False
+    if(term.Evaluation_Start_Date <= timezone.now()):
+        print('evaluation started')
+        evaluation_started = True
+    if(term.Evaluation_End_Date > timezone.now()):
+        print('evaluation ended')
+        evaluation_ended = True
+            
     courseinstructors = []    
     # Create dictionaries to store course and instructor data
     courseData = {}
@@ -93,7 +113,7 @@ def studenthomepage(request):
             ]
     for course in courseinstructors:
          print("course instructor to be send is ", course)
-         
+    print("started value", evaluation_started)     
     context = {
         'active_page': 'home',
         'studentenrollements': student_enrollments,
@@ -101,13 +121,27 @@ def studenthomepage(request):
         'instructorData': json.dumps(instructorData),
         'courseinstructors':courseinstructors,
         'term':term,
+        'evaluation_started':evaluation_started,
+        'evaluation_ended':evaluation_ended,
     }
 
     print("coursedata" , courseData  , "instructordata", instructorData)
     return render(request, 'student/studenthome.html', context)
 
 def student_evaluate_page(request):
-    term = Term.objects.last()
+    term = None
+    try:
+        term = Term.objects.get(EvaluationDone = False)
+    except:
+        term = None
+    evaluation_started = False
+    evaluation_ended = False
+    if(term.Evaluation_Start_Date <= timezone.now()):
+        print('evaluation started')
+        evaluation_started = True
+    if(term.Evaluation_End_Date > timezone.now()):
+        print('evaluation ended')
+        evaluation_ended = True
     student = Student.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(student=student, term=term)
     student_evaluation_result = StudentEvaluationResult.objects.filter(Student_id = student)
@@ -147,6 +181,8 @@ def student_evaluate_page(request):
         'evaluated_courses_types':evaluated_courses_types,
         'course_instructors':course_instructors,
         'evaluated_instructors':evaluated_instructors,
+        'evaluation_started':evaluation_started,
+        'evaluation_ended':evaluation_ended,
     }
 
     return render(request, 'student/evaluate.html', context)
@@ -247,7 +283,7 @@ def evaluate_course(request, student_id, course_id, instructor_id , course_type)
 def student_evaluation_reports(request , evaluator):
     # Retrieve all unique instructors evaluated by students for the term
     courses = Course.objects.all()
-    Term_id=Term.objects.last(),
+    term  = Term.objects.get(EvaluationDone = False)
     # Prepare a list to store instructor information with average scores
     instructor_data = []
     
@@ -302,7 +338,8 @@ def student_evaluation_reports(request , evaluator):
                     })
             
 
-    context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':str.title(evaluator)}
+    context = {'instructor_data': instructor_data , 'active_page':'report',
+               'evaluator':str.title(evaluator) , 'term':term}
     print("instructor infor ",instructor_data)
     return render(request, 'academichead/evaluation_reports.html', context)    
     
@@ -310,7 +347,7 @@ def student_evaluation_reports(request , evaluator):
 def total_evaluation_reports(request):
     # Retrieve all unique instructors evaluated by students for the term
     courses = Course.objects.all()
-
+    term  = Term.objects.get(EvaluationDone = False)
     # Prepare a list to store instructor information with average scores
     instructor_data = []
     # Iterate through instructors and calculate average scores
@@ -366,7 +403,8 @@ def total_evaluation_reports(request):
                         })
             
 
-    context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':'Both','total':'yes'}
+    context = {'instructor_data': instructor_data , 'active_page':'report', 
+               'evaluator':'Both','total':'yes' , 'term':term}
     print("instructor infor ",instructor_data)
     return render(request, 'academichead/evaluation_reports.html', context)    
 
@@ -442,15 +480,60 @@ def total_evaluation_reports_from_query(request , query):
     print("instructor infor ",instructor_data)
     return render(request, 'academichead/evaluation_reports.html', context)    
 
+def render_to_pdf(template_path, context_dict):
+    template = get_template(template_path)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("UTF-8")), result)
+    
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
 
+
+def viewpdf(request):
+    form = PDFDownloadForm(request.POST)
+    if form.is_valid():
+        instructor_id = form.cleaned_data['instructor_id']
+        print('instructor id found is ', instructor_id)
+        term_id = form.cleaned_data['term_id']
+        course_id = form.cleaned_data['course_id']
+        course = Course.objects.get(Course_id = course_id)
+        instructor = Instructor.objects.get(Instructor_id=instructor_id)
+        term = Term.objects.get(pk = term_id )
+        criteria_average_Scores_str = form.cleaned_data['criteria_average_Scores']
+        criteria_average_Scores = json.loads(criteria_average_Scores_str)
+        criteria_list = []
+        for criteria in  form.cleaned_data['criteria_sections'][1:-1].split(","):
+            result = str.strip(str(criteria).replace("'",""))
+            if result not in criteria_list:criteria_list.append(result)
+        print('criteria list is ' , criteria_list)
+        context_data = {
+            'criteria_average_Scores': criteria_average_Scores,
+            'criteria_sections':criteria_list ,
+            'instructor': instructor,
+            'course': course,
+            'course_type':form.cleaned_data['course_type'],
+            'active_page': form.cleaned_data['active_page'],
+            'evaluator': form.cleaned_data['evaluator'],
+            'term': term,
+            'sender':'instructorreport'
+        }
+        
+        print('criteria sections data is ',context_data['criteria_sections'])
+        # print('instructor first name ', form.cleaned_data['instructor'].FirstName)
+        pdf = render_to_pdf('academichead/generalreport.html', context_data)
+        return HttpResponse(pdf, content_type='application/pdf')
 
 
 
     
-def moreStudentEvaluationDetails(request , instructor_id , course_id , course_type , evaluator):
+def moreStudentEvaluationDetails(request , instructor_id , course_id , course_type , evaluator , term_id):
     instructor = Instructor.objects.get(Instructor_id = instructor_id)
     course = Course.objects.get(Course_id  = course_id)
     evaluation = None
+    term = Term.objects.get(Term_id = term_id)
+    desired_order = []
     if evaluator == 'Student':
         evaluations = StudentEvaluationResult.objects.filter(
                 Course_id =course,
@@ -459,6 +542,8 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
                 CourseType = course_type,
                 Instructor_id = instructor
                     )
+        desired_order = ['Course Organization', 'Knowledge of the subject matter', 'Teaching Methods',
+                    'Student Involvement', 'Evaluation Methods' , 'Personality Traits' , 'Availability and Support']
     elif evaluator == 'Staff':
             evaluations = StaffEvaluationResult.objects.filter(
                 Course_id =course,
@@ -467,11 +552,14 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
                 CourseType = course_type,
                 Instructor_id = instructor
                     )
+            desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeals Process' , 'Grade Change Procedures']
     criteria_average_details = []
     criteria = []
     criteria_category = {}
     criteria_sections = []
     criteria_average_Scores = []
+   
+    
     for evaluation in evaluations:
         for category, sub_dict in evaluation.EvaluationResult.items():
             if category not in criteria_sections:criteria_sections.append(category)
@@ -485,6 +573,8 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
                     'criteria': criterion,
                     'score': score,
                     })
+    print ('before soring criteria category is ' , criteria_category)
+    criteria_sections  = sorted(criteria_sections, key=lambda x: desired_order.index(x) if x in desired_order else float('inf'))
     print ("criteria dic is " , criteria_category)
     for  criteria , category in criteria_category.items():
         average_score = 0
@@ -500,19 +590,46 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
                 'score': average_score / len,  
             }
         )
-        
-    print ('criteria_average_Scores is ' , criteria_average_Scores)               
+    # print('criteria category before sorting is ' , criteria_category)
+    # print ('criteria_average_Scores is ' , criteria_average_Scores)   
+    # print('evaluation object is ' , evaluation)
+    form_context = {'criteria_average_Scores':json.dumps(criteria_average_Scores)  , 
+               'criteria_sections':criteria_sections , 
+               'instructor':instructor ,
+               'active_page':'report',
+               'course':course,
+               'course_id':course_id,
+               'instructor_id':instructor.Instructor_id ,
+               'term_id':term.Term_id , 
+               'evaluator':evaluator,
+               'term':term,
+               'pagetype':'normal',
+               'course_type':course_type
+               }
+    form = PDFDownloadForm(initial=form_context)            
     context = {'criteria_average_Scores':criteria_average_Scores  , 
                'criteria_sections':criteria_sections , 
                'instructor':instructor ,
-               'evaluation':evaluation, 
                'active_page':'report',
-               'evaluator':evaluator , 
+               'course':course,
+               'course_id':course_id,
+               'instructor_id':instructor.Instructor_id ,
+               'term_id':term.Term_id , 
+               'term':term,
+               'evaluator':evaluator,
+               'form':form,
+               'pagetype':'normal',
+               'course_type':course_type
                }
-    return render(request, 'academichead/moreevaluationdetials.html', context)    
+    # for section in context['criteria_sections']:
+    #         for criteria_score in context['criteria_average_Scores']:
+    #             print('score is ' ,criteria_score)
+    #             if criteria_score['category'] == section:
+    #                 print('yes')
+    return render(request, 'academichead/moreevaluationdetials.html', context )    
 
 def search_evaluation(request):
-    terms = Term.objects.all()
+    term  = None   
     instructors = Instructor.objects.all()
     courses = Course.objects.all()
     if request.method == 'POST':
@@ -536,6 +653,8 @@ def search_evaluation(request):
                         value_object = Course.objects.get(Course_id = value.split('(')[0])
                     elif field_name == 'term':
                         value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1])
+                        if value_object:
+                            term = value_object
                     elif field_name == 'instructor':
                         value_object = Instructor.objects.get(FirstName = value.split()[0] , LastName = value.split()[1] )
                     query_params[query_dic[f"{field_name}"]] = value_object
@@ -586,7 +705,7 @@ def search_evaluation(request):
                         avg_score/= len
                         print("average score is " , avg_score)
                         # Append instructor information to the list
-                        if evaluation:
+                        if evaluation and term:
                             instructor_data.append({
                         'instructor': instructor,
                         'course': course,
@@ -594,20 +713,32 @@ def search_evaluation(request):
                         'average_score': avg_score.__round__(2),
                         'current_evaluator':str.title(current_evaluator)
                         })
+                        elif evaluation and not term:
+                            instructor_data.append({
+                        'instructor': instructor,
+                        'course': course,
+                        'course_type': course_type,
+                        'average_score': avg_score.__round__(2),
+                        'term':evaluation.Term_id,
+                        'current_evaluator':str.title(current_evaluator)
+                        })
+
+                                
             else:
                 print("evaluation list not found")
                 messages.error(request, 'No result found!')
                 return redirect('search_evaluation')
 
                 
-        context = {'instructor_data': instructor_data , 'active_page':'report', 'evaluator':str.title(evaluator)}
-        print("instructor infor ",instructor_data)
+        context = {'instructor_data': instructor_data , 'active_page':'report', 
+                   'evaluator':str.title(evaluator) ,'term':term}
+        print("instructor infor ",instructor_data )
         return render(request, 'academichead/evaluation_reports.html', context)
 
     else:
         form = EvaluationSearchForm()
         print("in get")
-        context = {'form':form , 'active_page':'report', 'terms':terms , 'courses':courses , 'instructors':instructors}
+        context = {'form':form , 'active_page':'report', 'terms':Term.objects.all() , 'courses':courses , 'instructors':instructors}
         return render(request, 'academichead/evaluation_search.html', context)            
     
 

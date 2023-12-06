@@ -9,14 +9,26 @@
                 <h4 class="card-title">Welcome, {{user.username}}!</h4>
                 <div class="text-center">
                     
-                      {% if not term %}
-                      <p class="card-text">We're thrilled to have you on board. Your contribution is invaluable in shaping the educational experience at HILCoE.</p>
-                      {% else %}
-                      <div class="card-body text-danger">
-                      <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has started don't forget to evaluate.
-                      </p>
-                      {% endif %}  
-                    </div>  
+                    {% if not term %}
+                    <p class="card-text">We're thrilled to have you on board. Your contribution is invaluable in shaping the educational experience at HILCoE.</p>
+                    {% else %}
+                    {% if evaluation_started == True and evaluation_ended == False %}
+                    <div class="card-body text-danger">
+                    <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has started don't forget to evaluate before {{term.Evaluation_End_Date}}.
+                    </p>  
+                    </div>
+                    {% elif evaluation_started == True and evaluation_ended == True  %}
+                    <div class="card-body text-danger">
+                      <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has ended !.
+                      </p>  
+                      </div>
+                    {% elif evaluation_started == False %}
+                    <div class="card-body text-danger">
+                      <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has not started !.
+                      </p>  
+                      </div>
+                    {% endif %}             
+                    {% endif %}                         
                     <h6 class="text-muted">Evaluation Rules</h6>
                     <p class="card-text">As an evaluator, your role is critical in maintaining the integrity of our evaluation process. Familiarize yourself with the following rules:</p>
                     <ul class="list-group">
@@ -30,8 +42,11 @@
                     <p class="card-text">Your dedication to maintaining high standards in education is integral. Let's work together to elevate the teaching experience across the board.</p>
                 </div>
                 {% if term %}
+                {% if evaluation_started == True and evaluation_ended == False  %}
                 <br>
                 <a href="{% url 'evaluate_staff' %}" class="btn btn-outline-primary course-btn">Start Evaluation</a>
+                 <br><br>
+                 {% endif %}
                 {% endif %}
                 </div>
             </div>

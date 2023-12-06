@@ -1,9 +1,13 @@
 {% extends 'academichead/academichead.html' %}
 {% block content %}
     {% if evaluator == 'Both' %}
-    <h2 class="text-center mb-4"> Evaluation Report</h2>
+    <div class="card-body text-primary">
+    <h2 class="text-center mb-4"> Evaluation Report {% if term %} ({{ term }}) {% endif %}</h2>
+    </div>
     {% else %}
-    <h2 class="text-center mb-4">{{evaluator}} Evaluation Report</h2>
+    <div class="card-body text-primary">
+    <h2 class="text-center mb-4">{{evaluator}} Evaluation Report  {% if term %} ({{ term }}) {% endif %}</h2>
+    </div>
     {% endif %}
     <div class="row">
       {% if instructor_data %}
@@ -26,14 +30,20 @@
                   {% else %}
                   {% if evaluator == 'Both' %}
                       <h5>Evaluator: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.current_evaluator }}</span><br></h5>                       
-                      {% endif %}
-                    
-                    <h5>Average Score:</span>
-                    <span style="font-family: 'Open Sans', sans-serif; color: #000000; font-size: 18px;">{{ instructor_info.average_score }}</span>                    
+                  {% endif %}
+                  {% if not term %}
+                  <h5>Term: <span style="font-family: 'Open Sans', sans-serif; color: rgb(2, 4, 29);">{{ instructor_info.term }}</span><br></h5>                                         
+                   {% endif %}  
+                  <h5>Average Score:</span>
+                    <span style="font-family: 'Open Sans', sans-serif; color: #000000; font-size: 18px;">{{ instructor_info.average_score }} / 5</span>                    
                 </p>
                 {% endif %}
                 {% if total != 'yes' %}
-                <form method="POST" action="{% url 'morestudnet_evaluation_result' instructor_info.instructor.Instructor_id instructor_info.course.Course_id instructor_info.course_type instructor_info.current_evaluator  %}">
+                 {% if not term %}
+                <form method="POST" action="{% url 'morestudnet_evaluation_result' instructor_info.instructor.Instructor_id instructor_info.course.Course_id instructor_info.course_type instructor_info.current_evaluator instructor_info.term.Term_id  %}">
+                  {% else %}
+                  <form method="POST" action="{% url 'morestudnet_evaluation_result' instructor_info.instructor.Instructor_id instructor_info.course.Course_id instructor_info.course_type instructor_info.current_evaluator term.Term_id  %}">
+                   {% endif %}  
                   {% csrf_token %}
                   <div class="mb-3 d-flex">
                   <button type="submit"  class="btn btn-primary w-100">

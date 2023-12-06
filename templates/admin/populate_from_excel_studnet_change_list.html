@@ -1,0 +1,10 @@
+{% extends "admin/change_list.html" %}
+
+{% block object-tools-items %}
+  {{ block.super }}
+  <li>
+    <a href="{% url 'admin:populate_students_from_excel' %}" class="addlink">
+      Populate Student from Excel
+    </a>
+  </li>
+{% endblock %}

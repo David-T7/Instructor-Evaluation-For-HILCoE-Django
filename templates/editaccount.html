@@ -41,6 +41,9 @@
               {% elif sender == 'password' %}
               <div class="text-center">
                 <a href="{% url 'editusername' %}">Change Username</a>
+              </div><br>
+              <div class="text-center">
+              <a href="{% url 'addrecoveryemail' %}">Add Recovery Email</a>
               </div>
               {% endif %}
             </form>
