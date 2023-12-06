@@ -7,11 +7,11 @@
 <section class="h-100" style="background-color: rgb(38, 108, 236)">
     <div class="container h-100">
         <div class="row justify-content-sm-center h-100">
-            <div class="col-xxl-4 col-xl-5 col-lg-5 col-md-7 col-sm-9">
+            <div class="col-xxl-3 col-xl-5 col-lg-4 col-md-6 col-sm-6">
                 <br><br><br>
                 <div class="card shadow-lg">
                     <div class="card-body p-5">
-                        <h3 class="fw-normal mb-4" style="color: rgb(19, 92, 230)">Sign into your account</h3>
+                        <h3 class="fw-normal mb-4" style="color: rgb(19, 92, 230)">Sign in to your account</h3>
                         <form method="POST">
                             {% csrf_token %}
                             <div class="mb-3">
@@ -34,7 +34,7 @@
                                 {% endif %}
                                 {% endfor %}
                                 <div class="form-floating">
-                                    {% render_field form.password1 id="password1" type="password" class="form-control" placeholder="Password" name="password1" %}
+                                    {% render_field form.password1 id="password" type="password" class="form-control" placeholder="Password" name="password1" %}
                                     <label for="floatingPassword">Password</label>
                                 </div>
                              
