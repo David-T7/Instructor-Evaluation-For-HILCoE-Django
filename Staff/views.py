@@ -323,7 +323,13 @@ def generalEvaluationReport(request , type):
                     # return DownloadPDF('generalreport.html' , context , 'evaluation_report')
             else:
                 messages.error(request, 'No result found!')
-                return redirect('general_evaluation_report')    
+                terms = Term.objects.all()
+                form = GeneralReportForm(initial={'course_type': query.get('course_type') , 
+                                                  'evaluator': query.get('evaluator') ,
+                                                  'term': query.get('term')})
+                print('result not found ' , query)
+                context = {'form':form , 'active_page': 'general_report' , 'terms':terms , 'query':query }
+                return render(request, 'academichead/evaluationreportpage.html' , context )  
     else:
         terms = Term.objects.all()
         form = GeneralReportForm

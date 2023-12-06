@@ -727,7 +727,11 @@ def search_evaluation(request):
             else:
                 print("evaluation list not found")
                 messages.error(request, 'No result found!')
-                return redirect('search_evaluation')
+                form = EvaluationSearchForm(initial={'evaluator': query.get('evaluator') , })
+                print("in get")
+                context = {'form':form , 'active_page':'report', 'terms':Term.objects.all() , 
+                           'courses':courses , 'instructors':instructors , 'query':query}
+                return render(request, 'academichead/evaluation_search.html', context)      
 
                 
         context = {'instructor_data': instructor_data , 'active_page':'report', 

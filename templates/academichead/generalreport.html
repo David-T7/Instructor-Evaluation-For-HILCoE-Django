@@ -1,9 +1,7 @@
 {% if sender == 'totalreport' %}
 <div class="text-center">
-    <div class="card-body text-primary">
-        <h1 class="text-center mb-1">{{ evaluator }} {{ course_type }} Instructors Evaluation Report {% if term %}({{ term }}){% endif %}</h1>
-    </div>
-    <h2>Here is the average result of all instructors' evaluation results:</h2>
+    <h1 class="text-center mb-1">{{ evaluator }} {{ course_type }} Instructors Evaluation Report {% if term %}({{ term }}){% endif %}</h1>
+    <h2 class="text-center">Here is the average result of all instructors' evaluation results:</h2>
 {% elif sender == 'instructorreport' %}
 
     <div class="text-center">
@@ -11,10 +9,10 @@
        <h2 class="text-center mb-4">Detailed {{evaluator}} Evaluation Report {% if term %}({{term}}) {% endif %}</h2>
        </div>
      </div>
-         {% if instructor.ProfilePic %} 
+         {% if instructor %} 
          <div class="text-center">
      
-         <img src="{{ instructor.ProfilePic.url }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
+         <img src="{{ instructor.ProfilePic }}" alt="{{ instructor.name }} Profile Pic" class="img-fluid mb-2" style="height: 120px; width: 150px; border-radius: 30%;">
          </div>
          {% endif %}
          <div class="text-center">

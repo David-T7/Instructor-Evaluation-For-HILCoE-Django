@@ -23,7 +23,7 @@
       {% csrf_token %}
       <div class="mb-3">
         <div class="form-floating">
-      <input id="term" class="form-control" placeholder="Term" name="term">
+      <input id="term" class="form-control" placeholder="Term" name="term" value="{{query.term}}">
       <label for="floatingPassword">Term</label>
 
       <script> 
@@ -43,7 +43,7 @@
 
       <div class="mb-3">
         <div class="form-floating">
-      <input id="course" class="form-control" placeholder="Course" name="course">
+      <input id="course" class="form-control" placeholder="Course" name="course" value="{{query.course}}">
       <label for="floatingPassword">Course</label>
 
       <script> 
@@ -64,7 +64,7 @@
 
       <div class="mb-3">
         <div class="form-floating">
-      <input id="instructor" class="form-control" placeholder="Instructor" name="instructor">
+      <input id="instructor" class="form-control" placeholder="Instructor" name="instructor" value="{{query.instructor}}">
       <label for="floatingPassword">Instructor</label>
       <script> 
         $( function() { 

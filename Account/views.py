@@ -41,6 +41,10 @@ def Login(request):          # function based view for handling user login
                 except:
                     print("in exception")
                     messages.error(request, 'Username does not exist')
+                form = CustomUserCreationForm(initial={'username': username})
+                form.data['password1'] = request.POST.get('password1', '')
+                print('from data before sending password' , form.data['password1']  , password)
+                return render(request, 'login.html',{'Role':role,'form':form})  
                 
         except:
             try:
@@ -50,7 +54,14 @@ def Login(request):          # function based view for handling user login
             except:
                 print("in exception")
                 messages.error(request, 'Username does not exist')
-    return render(request, 'login.html',{'Role':role,'form':form})  
+        form = CustomUserCreationForm(initial={'username': username})
+        form.data['password1'] = request.POST.get('password1', '')
+        print('from data before sending password' , form.data['password1'] )
+        return render(request, 'login.html',{'Role':role,'form':form})  
+
+        
+    else:
+        return render(request, 'login.html',{'Role':role,'form':form})  
 
 
 def Logout(request):

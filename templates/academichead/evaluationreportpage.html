@@ -23,7 +23,7 @@
         {% csrf_token %}
         <div class="mb-3">
           <div class="form-floating">
-        <input id="term" class="form-control" placeholder="Term" name="term" required>
+        <input id="term" class="form-control" placeholder="Term" name="term" value="{{query.term}}" required>
         <label for="floatingPassword">Term</label>
   
         <script> 
@@ -42,14 +42,14 @@
         </div>
         <div class="mb-3">
             <div class="form-floating">
-              {% render_field form.evaluator id="evaluator" class="form-control" placeholder="Evaluator" name="evaluator" %}
+              {% render_field form.evaluator id="evaluator" class="form-control" placeholder="Evaluator"  name="evaluator" %}
               <label for="floatingPassword">Evaluator</label>
            </div>
           </div>
           
           <div class="mb-3">
             <div class="form-floating">
-              {% render_field form.course_type id="course_type" class="form-control" placeholder="CourseType" name="course_type" %}
+              {% render_field form.course_type id="course_type" class="form-control" placeholder="CourseType" name="course_type"  %}
               <label for="floatingPassword">CourseType</label>
            </div>
           </div>
