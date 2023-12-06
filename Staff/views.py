@@ -312,7 +312,8 @@ def generalEvaluationReport(request , type):
                          'active_page':'geneal_report',
                          'evaluator':evaluator ,
                          'term':term ,
-                         'course_type':str.title(course_type)
+                         'course_type':str.title(course_type),
+                         'sender':'totalreport',
                     }
                 if(type == 'view'):    
                     return render (ViewPDF('generalreport.html',context))
