@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'Staff',
     'openpyxl',
     'sekizai',
+    'axes',
 ]
 
 MIDDLEWARE = [
@@ -69,9 +70,23 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
 
+SILENCED_SYSTEM_CHECKS = ['axes.W003']
+AXES_ONLY_ADMIN_SITE = False
+AXES_ONLY_USER_FAILURES = True
+AXES_COOLOFF_TIME = 0.1
+AXES_LOGIN_ATTEMPT_LIMIT = 5
+AXES_FAILURE_LIMIT = 5
+AXES_RESET_ON_SUCCESS = True
+
+
 ROOT_URLCONF = 'instructor_evaluation.urls'
+
+
+
+
 
 TEMPLATES = [
     {
@@ -104,8 +119,16 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-
+SENDGRID_API_KEY = os.getenv('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') 
+EMAIL_HOST = 'smtp.sendgrid.net' 
+EMAIL_HOST_USER = 'apikey' # this is exactly the value 'apikey' 
+EMAIL_HOST_PASSWORD = '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'
+EMAIL_PORT = 587 
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'bloodbank979@gmail.com'
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
