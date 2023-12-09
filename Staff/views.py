@@ -27,7 +27,7 @@ def staffHomePage(request):
     if(term.Evaluation_Start_Date <= timezone.now()):
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date > timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()):
         print('evaluation ended')
         evaluation_ended = True
     context = { 'active_page': 'home', 'term':term , 'evaluation_started':evaluation_started , 'evaluation_ended':evaluation_ended }
@@ -44,7 +44,7 @@ def staff_evaluate_page(request):
     if(term.Evaluation_Start_Date <= timezone.now()):
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date > timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()):
         print('evaluation ended')
         evaluation_ended = True
     staff = Staff.objects.get(Account_id=request.user)
@@ -185,7 +185,7 @@ def academicheadHomePage(request):
     if(term.Evaluation_Start_Date <= timezone.now()):
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date > timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()):
         print('evaluation ended')
         evaluation_ended = True
     context = { 'active_page': 'home', 'term':term , 'evaluation_started':evaluation_started , 'evaluation_ended':evaluation_ended}

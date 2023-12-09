@@ -1,3 +1,4 @@
+from datetime import datetime
 import json
 from django.shortcuts import render
 from Account.forms import CustomUserCreationForm
@@ -86,7 +87,7 @@ def studenthomepage(request):
     if(term.Evaluation_Start_Date <= timezone.now()):
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date > timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()):
         print('evaluation ended')
         evaluation_ended = True
             
@@ -136,10 +137,10 @@ def student_evaluate_page(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date <= timezone.now()):
+    if(term.Evaluation_Start_Date  <= timezone.now()()):
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date > timezone.now()):
+    if(term.Evaluation_End_Date   < timezone.now()):
         print('evaluation ended')
         evaluation_ended = True
     student = Student.objects.get(Account_id=request.user)

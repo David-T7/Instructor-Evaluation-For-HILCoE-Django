@@ -19,7 +19,7 @@
                               <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has started don't forget to evaluate before {{term.Evaluation_End_Date}}.
                               </p>  
                               </div>
-                              {% elif evaluation_started == True and evaluation_ended == True  %}
+                              {% elif evaluation_ended == True  %}
                               <div class="card-body text-danger">
                                 <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has ended !.
                                 </p>  

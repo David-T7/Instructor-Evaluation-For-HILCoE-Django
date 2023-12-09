@@ -119,16 +119,10 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-SENDGRID_API_KEY = os.getenv('') 
-EMAIL_HOST = 'smtp.sendgrid.net' 
-EMAIL_HOST_USER = 'apikey' # this is exactly the value 'apikey' 
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = 587 
-EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = 'bloodbank979@gmail.com'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
@@ -164,16 +158,16 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 # production
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "static"
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / "media"
+# STATIC_URL = '/static/'
+# STATIC_ROOT = BASE_DIR / "static"
+# MEDIA_URL = '/media/'
+# MEDIA_ROOT = BASE_DIR / "media"
 
 # development 
-# STATIC_URL = '/static/'
-# STATIC_ROOT = BASE_DIR / 'staticfiles'
-# STATICFILES_DIRS = [BASE_DIR / 'static',]
-# STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static',]
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
