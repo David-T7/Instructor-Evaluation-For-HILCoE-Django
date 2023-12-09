@@ -101,7 +101,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
     instructor = Instructor.objects.get(Instructor_id=instructor_id)
         # Find the latest term where evaluation is not done
     term = Term.objects.filter(Courses_Given=course, EvaluationDone=False).order_by('-Year', 'Season').first()
-    desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeals Process' , 'Grade Change Procedures']
+    desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeal Process' , 'Grade Change Procedures']
     if not term:
         messages.warning(request, 'Course evaluation is already completed for all terms.')
         return redirect('evaluate')  # Redirect to home or another page
@@ -166,6 +166,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
         'criteria_data': all_criteria_data, 
         'active_page':'evaluation',
         'all_criteria_sections':all_criteria ,
+        'criteria_sections':criteria_sections,
         'instructor':instructor,
         'course_type':course_type,
         'criteria_results' : criteria_results,
@@ -266,7 +267,7 @@ def generalEvaluationReport(request , type):
                 EvaluationDone=True ,
                 CourseType = course_type
                     )
-                desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeals Process' , 'Grade Change Procedures']
+                desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeal Process' , 'Grade Change Procedures']
             criteria_average_details = []
             criteria = []
             criteria_category = {}

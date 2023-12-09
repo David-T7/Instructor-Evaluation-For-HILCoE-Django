@@ -42,12 +42,12 @@
           </tr>
         </thead>
         <tbody>
-          {% for section in all_criteria_sections %}  
+          {% for section in criteria_sections %}  
           <tr>
             <td colspan="3" class="bg text-white font-weight-bold text-center " style="background-color:rgb(75, 130, 233) ;">{{ section.Section }}</td>
           </tr>
           {% for criteria in criteria_data %}
-          {% if criteria.Section == section.Section %}
+          {% if criteria.Section.Section == section.Section %}
               <tr>
                 {% with criteriaid=criteria.Criteria_id|slugify %}
                 {% if error_occured == True and  not criteria_results|dict_lookup:criteriaid %}
