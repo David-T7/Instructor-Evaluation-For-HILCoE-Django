@@ -122,10 +122,10 @@ DATABASES = {
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-SENDGRID_API_KEY = os.getenv('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') 
+SENDGRID_API_KEY = os.getenv('') 
 EMAIL_HOST = 'smtp.sendgrid.net' 
 EMAIL_HOST_USER = 'apikey' # this is exactly the value 'apikey' 
-EMAIL_HOST_PASSWORD = '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'
+EMAIL_HOST_PASSWORD = ''
 EMAIL_PORT = 587 
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'bloodbank979@gmail.com'
