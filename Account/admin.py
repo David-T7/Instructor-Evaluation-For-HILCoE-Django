@@ -1,6 +1,6 @@
 from django.contrib import admin
 from Account.forms import CustomUserCreationForm
-from .models import  StudentInfo , Account
+from .models import Account
 from django.contrib.auth.admin import UserAdmin
 class CustomUserAdmin(UserAdmin):
     add_form = CustomUserCreationForm
@@ -18,5 +18,4 @@ class CustomUserAdmin(UserAdmin):
         ),
     )
 
-admin.site.register(StudentInfo)
 admin.site.register(Account , CustomUserAdmin)

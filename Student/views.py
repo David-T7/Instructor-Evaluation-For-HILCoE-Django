@@ -2,7 +2,7 @@ from datetime import datetime
 import json
 from django.shortcuts import render
 from Account.forms import CustomUserCreationForm
-from Account.models import StudentInfo , Account
+from Account.models import  Account
 from Evaluation.models import Criteria, CriteriaSection, EvaluationCriteria
 from Instructor.models import Instructor
 from Staff.models import StaffEvaluationResult
@@ -27,7 +27,6 @@ from xhtml2pdf import pisa
 
 
 # Create your views here.
-
 def Register(request):
     form1 = StudentCreationForm()   # using the donor creation form created in forms.py
     form2= CustomUserCreationForm()
@@ -71,10 +70,12 @@ def Register(request):
     return render(request, 'registerpage.html',context)
 
 def Studnets(request):
+    # for displaying a student page.
     context = {'user':request.user}
     return render(request , 'student/student.html' , context)
 
 def studenthomepage(request):
+    # for displaying student's homepage which shows evaluation status.
     student = Student.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(student=student)
     term = None
@@ -84,52 +85,53 @@ def studenthomepage(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date <= timezone.now()):
+    if(term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date < timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()): # check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
             
-    courseinstructors = []    
-    # Create dictionaries to store course and instructor data
-    courseData = {}
-    instructorData = {}
+    # courseinstructors = []    
+    # # Create dictionaries to store course and instructor data
+    # courseData = {}
+    # instructorData = {}
 
-    # Populate course and instructor data based on student enrollments
-    for enrollment in student_enrollments:
-        course = enrollment.course
-        course_instructors = CourseInstructor.objects.filter(Course = course ,Batch = student.Batch )
-        courseinstructors.append(course_instructors)
-        for courseinstructor in course_instructors:        
-            courseData[courseinstructor.Instructors.Instructor_id] = {
-                'coursename': courseinstructor.Course.CourseName,
-                'creditHours': courseinstructor.Course.CreditHour,
-                'courseId': courseinstructor.Course.Course_id,
-                'courseType':courseinstructor.CourseType,
-            }
+    # # Populate course and instructor data based on student enrollments
+    # for enrollment in student_enrollments:
+    #     course = enrollment.course
+    #     course_instructors = CourseInstructor.objects.filter(Course = course ,Batch = student.Batch )
+    #     courseinstructors.append(course_instructors)
+    #     for courseinstructor in course_instructors:        
+    #         courseData[courseinstructor.Instructors.Instructor_id] = {
+    #             'coursename': courseinstructor.Course.CourseName,
+    #             'creditHours': courseinstructor.Course.CreditHour,
+    #             'courseId': courseinstructor.Course.Course_id,
+    #             'courseType':courseinstructor.CourseType,
+    #         }
 
-            instructorData[courseinstructor.Instructors.Instructor_id] = [
-            {'FirstName': courseinstructor.Instructors.FirstName, 'LastName': courseinstructor.Instructors.LastName , 'profilePic':'/static/'+str(courseinstructor.Instructors.ProfilePic) }
-            ]
-    for course in courseinstructors:
-         print("course instructor to be send is ", course)
-    print("started value", evaluation_started)     
+    #         instructorData[courseinstructor.Instructors.Instructor_id] = [
+    #         {'FirstName': courseinstructor.Instructors.FirstName, 'LastName': courseinstructor.Instructors.LastName , 'profilePic':'/static/'+str(courseinstructor.Instructors.ProfilePic) }
+    #         ]
+    # for course in courseinstructors:
+    #      print("course instructor to be send is ", course)
+    # print("started value", evaluation_started)     
     context = {
         'active_page': 'home',
-        'studentenrollements': student_enrollments,
-        'courseData': json.dumps(courseData),
-        'instructorData': json.dumps(instructorData),
-        'courseinstructors':courseinstructors,
+        # 'studentenrollements': student_enrollments,
+        # 'courseData': json.dumps(courseData),
+        # 'instructorData': json.dumps(instructorData),
+        # 'courseinstructors':courseinstructors,
         'term':term,
         'evaluation_started':evaluation_started,
         'evaluation_ended':evaluation_ended,
     }
 
-    print("coursedata" , courseData  , "instructordata", instructorData)
+    # print("coursedata" , courseData  , "instructordata", instructorData)
     return render(request, 'student/studenthome.html', context)
 
 def student_evaluate_page(request):
+    # for displaying currently enrolled classes 
     term = None
     try:
         term = Term.objects.get(EvaluationDone = False)
@@ -137,10 +139,10 @@ def student_evaluate_page(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date  <= timezone.now()):
+    if(term.Evaluation_Start_Date  <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date   < timezone.now()):
+    if(term.Evaluation_End_Date   < timezone.now()): #check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
     student = Student.objects.get(Account_id=request.user)
@@ -189,6 +191,7 @@ def student_evaluate_page(request):
     return render(request, 'student/evaluate.html', context)
     
 def evaluate_course(request, student_id, course_id, instructor_id , course_type):
+    # for displaying the evaluation form and saving the results of the evaluation
     evaluationMapping= {'Excellent':5,'Very Good':4,'Good':3,'Poor':2,'Very Poor':1}
     evaluated_criteria_descriptions = set()
     student = Student.objects.get(Student_id=student_id)
@@ -244,7 +247,7 @@ def evaluate_course(request, student_id, course_id, instructor_id , course_type)
         # Get all unique criteria descriptions
         all_criteria_descriptions = set(criteria.description for criteria in all_criteria_data)        
         # print("evaluation resullt",evaluation_result)     
-        if evaluation_result and evaluated_criteria_descriptions == all_criteria_descriptions:
+        if evaluation_result and evaluated_criteria_descriptions == all_criteria_descriptions: # save the evaluation result
             result_instance, created = StudentEvaluationResult.objects.get_or_create(
                 Student_id=student,
                 Course_id=course,
@@ -482,6 +485,7 @@ def total_evaluation_reports_from_query(request , query):
     return render(request, 'academichead/evaluation_reports.html', context)    
 
 def render_to_pdf(template_path, context_dict):
+    # for rendering content to html and save it as pdf
     template = get_template(template_path)
     html = template.render(context_dict)
     result = BytesIO()
@@ -493,6 +497,7 @@ def render_to_pdf(template_path, context_dict):
 
 
 def viewpdf(request):
+    # for displaying html content as pdf
     form = PDFDownloadForm(request.POST)
     if form.is_valid():
         instructor_id = form.cleaned_data['instructor_id']
@@ -530,6 +535,7 @@ def viewpdf(request):
 
     
 def moreStudentEvaluationDetails(request , instructor_id , course_id , course_type , evaluator , term_id):
+    # for displaying detailed criteria evaluation result of agreegate score
     instructor = Instructor.objects.get(Instructor_id = instructor_id)
     course = Course.objects.get(Course_id  = course_id)
     evaluation = None
@@ -543,7 +549,7 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
                 CourseType = course_type,
                 Instructor_id = instructor
                     )
-        desired_order = ['Course Organization', 'Knowledge of the subject matter', 'Teaching Methods',
+        desired_order = ['Course Organization', 'Knowledge of the subject matter', 'Teaching Methods', #for displaying Student criteria sections in a specified order
                     'Student Involvement', 'Evaluation Methods' , 'Personality Traits' , 'Availability and Support']
     elif evaluator == 'Staff':
             evaluations = StaffEvaluationResult.objects.filter(
@@ -553,7 +559,7 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
                 CourseType = course_type,
                 Instructor_id = instructor
                     )
-            desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeals Process' , 'Grade Change Procedures']
+            desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeals Process' , 'Grade Change Procedures'] #for displaying the Staff criteria sections in a specified order
     criteria_average_details = []
     criteria = []
     criteria_category = {}
@@ -630,6 +636,7 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
     return render(request, 'academichead/moreevaluationdetials.html', context )    
 
 def search_evaluation(request):
+    # for searching an evaluation result based on some inputs
     term  = None   
     instructors = Instructor.objects.all()
     courses = Course.objects.all()

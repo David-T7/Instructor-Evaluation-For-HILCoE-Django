@@ -8,9 +8,11 @@ from .models import Instructor
 from django.contrib import  messages
 # Create your views here.
 def Instructors(request):
+    # for returning instructor page
     context = {'user':request.user}
     return render(request , 'instructor/instructor.html' , context)
 def InstructorHomePage(request):
+    # for returning instructor homepage
     instructor = Instructor.objects.get(Account_id = request.user)
     context = { 'active_page': 'home', 'instructor':instructor}
     return render(request , 'instructor/instructorhome.html' , context)

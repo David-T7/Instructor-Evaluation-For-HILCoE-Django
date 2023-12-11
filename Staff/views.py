@@ -14,9 +14,11 @@ from django.template.loader import get_template
 from django.views import View
 from xhtml2pdf import pisa
 # Create your views here.
-def stafflandingpage(request): 
+def stafflandingpage(request):
+    # for displaying a staff page 
     return render(request , 'stafflandingpage.html')
 def staffHomePage(request):
+    # for dispalying a staff home page
     term = None
     try:
         term = Term.objects.get(EvaluationDone = False)
@@ -24,16 +26,17 @@ def staffHomePage(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date <= timezone.now()):
+    if(term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date < timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()): #check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
     context = { 'active_page': 'home', 'term':term , 'evaluation_started':evaluation_started , 'evaluation_ended':evaluation_ended }
     return render(request , 'staff/staffhome.html' , context)
 
 def staff_evaluate_page(request):
+    # for displaying currently courses given by instructors
     term = None
     try:
         term = Term.objects.get(EvaluationDone = False)
@@ -41,10 +44,10 @@ def staff_evaluate_page(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date <= timezone.now()):
+    if(term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date < timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()): #check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
     staff = Staff.objects.get(Account_id=request.user)
@@ -94,12 +97,13 @@ def staff_evaluate_page(request):
     return render(request, 'staff/evaluate.html', context)
 
 def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_type):
+    # for displaying the evaluation form and saving the results of the evaluation
     evaluationMapping= {'Excellent':5,'Very Good':4,'Good':3,'Poor':2,'Very Poor':1}
     evaluated_criteria_descriptions = set()
     staff = Staff.objects.get(Account_id=request.user)
     course = Course.objects.get(Course_id=course_id)
     instructor = Instructor.objects.get(Instructor_id=instructor_id)
-        # Find the latest term where evaluation is not done
+    # Find the latest term where evaluation is not done
     term = Term.objects.filter(Courses_Given=course, EvaluationDone=False).order_by('-Year', 'Season').first()
     desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeal Process' , 'Grade Change Procedures']
     if not term:
@@ -176,6 +180,7 @@ def staff_evaluate_course(request, staff_id, course_id, instructor_id  , course_
     return render(request, 'staff/evaluate_course.html', context)
 
 def academicheadHomePage(request):
+    # for displaying the academic head homepage
     term = None
     try:
         term = Term.objects.get(EvaluationDone = False)
@@ -183,29 +188,23 @@ def academicheadHomePage(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date <= timezone.now()):
+    if(term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date < timezone.now()):
+    if(term.Evaluation_End_Date < timezone.now()): #check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
     context = { 'active_page': 'home', 'term':term , 'evaluation_started':evaluation_started , 'evaluation_ended':evaluation_ended}
     return render(request , 'academichead/academicheadhome.html' , context)
 
-# def render_to_pdf(template_src, context_dict={}):
-# 	template = get_template(template_src)
-# 	html  = template.render(context_dict)
-# 	result = BytesIO()
-# 	pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
-# 	if not pdf.err:
-# 		return HttpResponse(result.getvalue(), content_type='application/pdf')
-# 	return None
 
 def ViewPDF(templatename , data):
-		pdf = render_to_pdf('academichead/'+templatename, data)
-		return HttpResponse(pdf, content_type='application/pdf')
+    # for displaying html content as pdf
+	pdf = render_to_pdf('academichead/'+templatename, data)
+	return HttpResponse(pdf, content_type='application/pdf')
 
 def render_to_pdf(template_path, context_dict):
+    # for rendering the content on the given html page
     template = get_template(template_path)
     html = template.render(context_dict)
     result = BytesIO()
@@ -216,6 +215,7 @@ def render_to_pdf(template_path, context_dict):
     return None
 
 def DownloadPDF(templatename, data, filename):
+    # for downloading the content on the given html page as pdf
     pdf = render_to_pdf('academichead/'+templatename, data)
 
     if pdf:
@@ -226,6 +226,7 @@ def DownloadPDF(templatename, data, filename):
     # Handle the case where PDF generation failed
     return HttpResponse("PDF generation failed", status=500)
 def generalEvaluationReport(request , type):
+    # for genrating evaluation report basd on a given input
     evaluations = None
     term = None
     evaluator = None

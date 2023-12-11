@@ -11,7 +11,8 @@ from Instructor.models import Instructor
 
 
 # Create your views here.
-def Login(request):          # function based view for handling user login
+def Login(request):          
+    # function based view for handling user login
     form = CustomUserCreationForm()
     role = None
     if request.method == 'POST':
