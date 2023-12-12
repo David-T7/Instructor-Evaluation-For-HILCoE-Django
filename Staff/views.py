@@ -54,12 +54,15 @@ def staff_evaluate_page(request):
     student_enrollments = StudentCourseEnrollment.objects.filter(term=term)
     staff_evaluation_result = StaffEvaluationResult.objects.filter(Staff_id = staff)
     evaluated_courses_types = []
-    evaluated_instructors = []
+    evaluated_instructors = {}
     course_instructors = []    
     if staff_evaluation_result:
         for staff_evaluation in staff_evaluation_result:
-            evaluated_instructors.append(staff_evaluation.Instructor_id.Instructor_id)
-            evaluated_courses_types.append(staff_evaluation.CourseType)
+            eval_list = []
+            eval_list.append(staff_evaluation.Instructor_id.Instructor_id)
+            eval_list.append(staff_evaluation.CourseType)
+            eval_list.append(staff_evaluation.Course_id.CourseName)
+            evaluated_instructors[staff_evaluation.Course_id.CourseName] = eval_list
     courses_data = []
     for enrollment in student_enrollments:
         instructors_data = []
