@@ -159,7 +159,7 @@ def student_evaluate_page(request):
             eval_list.append(student_evaluation.Instructor_id.Instructor_id)
             eval_list.append(student_evaluation.CourseType)
             eval_list.append(student_evaluation.Course_id.CourseName)
-            evaluated_instructors[student_evaluation.Course_id.CourseName] = eval_list
+            evaluated_instructors[student_evaluation.Course_id.CourseName+student_evaluation.CourseType] = eval_list
     courses_data = []
     for enrollment in student_enrollments:
         instructors_data = []

@@ -23,13 +23,15 @@
         <div class="col-md-4 mb-4">
           <div class="text-center">
             {% with coursename=course.Course.CourseName %}
-            {% if course.Instructors.Instructor_id in evaluated_instructors|dict_lookup:coursename and course.CourseType in evaluated_instructors|dict_lookup:coursename and course.Course.CourseName in  evaluated_instructors|dict_lookup:coursename %}
+            {% with name_type=coursename|add:course.CourseType %}
+            {% if course.Instructors.Instructor_id in evaluated_instructors|dict_lookup:name_type and course.CourseType in evaluated_instructors|dict_lookup:name_type and course.Course.CourseName in  evaluated_instructors|dict_lookup:name_type %}
         <div class="card border-success mb-3" style="max-width: 18rem;">
         {% else %} 
+       
         <div class="card border-primary mb-3" style="max-width: 18rem;">
         {% endif %}
         <div class="card-header">{{ course.Course.CourseName }} ({{ course.Course.Course_id }}) {{course.CourseType}}</div>
-        {% if course.Instructors.Instructor_id in evaluated_instructors|dict_lookup:coursename and course.CourseType in evaluated_instructors|dict_lookup:coursename and course.Course.CourseName in  evaluated_instructors|dict_lookup:coursename %} 
+        {% if course.Instructors.Instructor_id in evaluated_instructors|dict_lookup:name_type and course.CourseType in evaluated_instructors|dict_lookup:name_type and course.Course.CourseName in  evaluated_instructors|dict_lookup:name_type %} 
       <div class="card-body text-success">
         {% else %}
         <div class="card-body text-primary">
@@ -41,11 +43,12 @@
           </p>
           <h5 class="card-title">{{ course.Instructors.Title }} {{ course.Instructors.FirstName }} {{ course.Instructors.LastName }}</h5>
           <div class="mb-3 d-md-flex">
-            {% if course.Instructors.Instructor_id in evaluated_instructors|dict_lookup:coursename and course.CourseType in evaluated_instructors|dict_lookup:coursename and course.Course.CourseName in  evaluated_instructors|dict_lookup:coursename %}
+            {% if course.Instructors.Instructor_id in evaluated_instructors|dict_lookup:name_type and course.CourseType in evaluated_instructors|dict_lookup:name_type and course.Course.CourseName in  evaluated_instructors|dict_lookup:name_type %}
             <a href="#" class="btn btn-success w-100 max-width-300 disabled">Evaluated</a>
             {% else %} 
             <a href="{% url 'evaluate_course' student.Student_id course.Course.Course_id course.Instructors.Instructor_id course.CourseType %}" class="btn btn-primary w-100 max-width-300">Evaluate</a>
-              {% endif %}    
+            {% endif %}    
+            {% endwith %}       
             {% endwith %}             
            </div>
                 </div>
