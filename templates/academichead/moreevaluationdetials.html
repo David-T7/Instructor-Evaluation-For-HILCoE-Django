@@ -1,5 +1,6 @@
 {% extends 'academichead/academichead.html' %}
 {% load static %}
+{% load dict_lookup %}
 {% block content %}
 <div class="text-center">
    <div class="card-body text-primary">
@@ -28,12 +29,12 @@
          
           {% for section in criteria_sections %}  
           <tr>
-            <td colspan="3" class="bg text-white font-weight-bold text-center " style="background-color:rgb(75, 130, 233) ;">{{ section }}</td>
-          </tr>
+            <td colspan="3" class="bg text-white font-weight-bold text-center " style="background-color:rgb(75, 130, 233) ;">{{ section }} ( {{ category_average_scores|dict_lookup:section }} / 5.0 )</td>
+          </tr> 
          {% for criteria_score in criteria_average_Scores %}
           {% if criteria_score.category == section %}
               <tr>
-                <td style="background-color:rgb(181, 206, 253) ;">{{ criteria_score.criteria }}</td>
+                <td style="background-color:rgb(181, 206, 253) ; text-align: left;">{{ criteria_score.criteria }}</td>
                 <td style="background-color:rgb(181, 206, 253) ;">{{ criteria_score.score }}</td>
               </tr>
             {% endif %}

@@ -13,6 +13,9 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from django.views import View
 from xhtml2pdf import pisa
+from django.http import HttpResponse
+from openpyxl import Workbook
+from Student.views import total_evaluation_reports_from_query
 # Create your views here.
 def stafflandingpage(request):
     # for displaying a staff page 
@@ -228,24 +231,30 @@ def DownloadPDF(templatename, data, filename):
 
     # Handle the case where PDF generation failed
     return HttpResponse("PDF generation failed", status=500)
+
 def generalEvaluationReport(request , type):
     # for genrating evaluation report basd on a given input
     evaluations = None
     term = None
     evaluator = None
+    department = None
     course_type = None
+    
     if request.method == 'POST':
         print("in post before evaluting form" , request.POST)
         query = request.POST
         query_dic = {'term':'Term_id'}
         if query:
             query_params = {}
+            # query_dic = {'course':'Course_id' , 'term':'Term_id' , 'instructor':'Instructor_id'}
             if query['evaluator']:
                 evaluator = query['evaluator']
             else:
                 evaluator = 'both'
             if query['course_type']:
                 course_type = query['course_type']
+            if query['department']:
+                department = query['department']
             print('form cleaned data is ' , query.items())
             # Check each form field and add it to the query_params if it's not empty
             for field_name, value in query.items():
@@ -256,7 +265,7 @@ def generalEvaluationReport(request , type):
                             term = value_object    
   
             desired_order = []
-    
+            
             if evaluator == 'Student':
                 evaluations = StudentEvaluationResult.objects.filter(
                 Term_id= term , 
@@ -272,26 +281,31 @@ def generalEvaluationReport(request , type):
                 CourseType = course_type
                     )
                 desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeal Process' , 'Grade Change Procedures']
+            
             criteria_average_details = []
             criteria = []
             criteria_category = {}
             criteria_sections = []
             criteria_average_Scores = []
-   
+            courses = []
+            for evaluation in evaluations:
+                if evaluation.Course_id not in courses and evaluation.Course_id.Department == department:
+                    courses.append(evaluation.Course_id) 
             if evaluations:
                 for evaluation in evaluations:
-                    for category, sub_dict in evaluation.EvaluationResult.items():
-                        if category not in criteria_sections:criteria_sections.append(category)
-                        average_score = 0
-                        for criterion, score in sub_dict.items():
-                            if criterion not in criteria:
-                                criteria_category[criterion] = category
-                            criteria.append(criterion)
-                            criteria_average_details.append({
-                                 'category': category,
-                                'criteria': criterion,
-                                'score': score,
-                                })
+                    if ( evaluation.Course_id in courses):
+                        for category, sub_dict in evaluation.EvaluationResult.items():
+                            if category not in criteria_sections:criteria_sections.append(category)
+                            average_score = 0
+                            for criterion, score in sub_dict.items():
+                                if criterion not in criteria:
+                                    criteria_category[criterion] = category
+                                criteria.append(criterion)
+                                criteria_average_details.append({
+                                    'category': category,
+                                    'criteria': criterion,
+                                    'score': score,
+                                    })
                 print ('before soring criteria category is ' , criteria_category)
                 criteria_sections  = sorted(criteria_sections, key=lambda x: desired_order.index(x) if x in desired_order else float('inf'))
                 print ("criteria dic is " , criteria_category)
@@ -317,6 +331,7 @@ def generalEvaluationReport(request , type):
                          'active_page':'geneal_report',
                          'evaluator':evaluator ,
                          'term':term ,
+                         'department':department,
                          'course_type':str.title(course_type),
                          'sender':'totalreport',
                     }
@@ -340,3 +355,254 @@ def generalEvaluationReport(request , type):
         form = GeneralReportForm
         context = {'form':form , 'active_page': 'general_report' , 'terms':terms}
         return render(request, 'academichead/evaluationreportpage.html' , context )    
+
+
+def generate_total_report_excel(request):
+     # for genrating evaluation report basd on a given input
+    evaluations = None
+    term = None
+    evaluator = None
+    department = None
+    course_type = None
+    print("in generate excel file")
+    if request.method == 'POST':
+        print("in post before evaluting form" , request.POST)
+        query = request.POST
+        query_dic = {'term':'Term_id'}
+        if query:
+            query_params = {}
+            for field_name, value in query.items():
+                if value and field_name in query_dic:
+                    if field_name == 'course':
+                        value_object = Course.objects.get(Course_id = value.split('(')[0])
+                    elif field_name == 'term':
+                        value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1])
+                        if value_object:
+                            term = value_object
+                    elif field_name == 'instructor':
+                        value_object = Instructor.objects.get(FirstName = value.split()[0] , LastName = value.split()[1] )
+                    query_params[query_dic[f"{field_name}"]] = value_object
+                    print("field name is",field_name , value)
+            if query['evaluator']:
+                evaluator = query['evaluator']
+            else:
+                evaluator = 'both'
+            if query['course_type']:
+                course_type = query['course_type']
+            if query['department']:
+                department = query['department']
+            if evaluator == 'Total':
+                    print("evaluator is total before preceeding.....")
+                    details = {"department":department , "term":term , "generate_excel_file":True}
+                    return total_evaluation_reports_from_query(request , query_params ,details )
+            print('form cleaned data is ' , query.items())
+            # Check each form field and add it to the query_params if it's not empty
+            for field_name, value in query.items():
+                if value and field_name in query_dic:
+                    if field_name == 'term':
+                        value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1]) 
+                        if value_object:
+                            term = value_object    
+  
+            desired_order = []
+            
+            if evaluator == 'Student':
+                evaluations = StudentEvaluationResult.objects.filter(
+                Term_id= term , 
+                EvaluationDone=True ,
+                CourseType = course_type
+                    )
+                desired_order = ['Course Organization', 'Knowledge of the subject matter', 'Teaching Methods',
+                    'Student Involvement', 'Evaluation Methods' , 'Personality Traits' , 'Availability and Support']
+            elif evaluator == 'Staff':
+                evaluations = StaffEvaluationResult.objects.filter(
+                Term_id=term,
+                EvaluationDone=True ,
+                CourseType = course_type
+                    )
+                desired_order = ['Timely Grade Submission' , 'Accuracy of Grade Records' , 'Grade Appeal Process' , 'Grade Change Procedures']
+
+            # criteria_average_details = []
+            # criteria = []
+            # criteria_category = {}
+            # criteria_sections = []
+            # criteria_average_Scores = []
+            # category_average_scores = []
+            courses = []
+            context = []
+            course_instructors = CourseInstructor.objects.filter(CourseType = course_type)
+            print("cousre instructor length is " , course_instructors.count)
+            for evaluation in evaluations:
+                if evaluation.Course_id not in courses and evaluation.Course_id.Department == department:
+                    courses.append(evaluation.Course_id)
+            if evaluations:    
+                for course_instructor in course_instructors:
+                        criteria_average_details = []
+                        criteria = []
+                        criteria_category = {}
+                        criteria_sections = []
+                        criteria_average_Scores = []
+                        category_average_scores = []
+                        for evaluation in evaluations:
+                            print("in evaluation")
+                            if ( evaluation.Course_id in courses and str(evaluation.Instructor_id.Instructor_id) == str(course_instructor.Instructors.Instructor_id) and str(evaluation.Course_id.Course_id) == str(course_instructor.Course.Course_id) ):
+                                print("passed now ")
+                                for category, sub_dict in evaluation.EvaluationResult.items():
+                                    if category not in criteria_sections:criteria_sections.append(category)
+                                    average_score = 0
+                                    for criterion, score in sub_dict.items():
+                                        if criterion not in criteria:
+                                            criteria_category[criterion] = category
+                                        criteria.append(criterion)
+                                        criteria_average_details.append({
+                                            'category': category,
+                                            'criteria': criterion,
+                                            'score': score,
+                                            })
+                        print ('before soring criteria category is ' , criteria_category)
+                        criteria_sections  = sorted(criteria_sections, key=lambda x: desired_order.index(x) if x in desired_order else float('inf'))
+                        print ("criteria dic is " , criteria_category)
+                        for  criteria , category in criteria_category.items():
+                            average_score = 0
+                            len = 0
+                            for average_details in criteria_average_details:
+                                if average_details['category'] == category and average_details['criteria'] == criteria:
+                                    average_score += average_details['score']
+                                    len+=1
+                            criteria_average_Scores.append(
+                                    {
+                                        'category': category,
+                                        'criteria': criteria,
+                                        'score': average_score / len,  
+                                    }
+                                        )
+                            # Create a dictionary to store accumulated scores and counts for each category
+                            print('criteria category before sorting is ' , criteria_category)
+                            print ('criteria_average_Scores is ' , criteria_average_Scores)
+                        category_averages = {}
+
+                        # Iterate through the list and accumulate scores for each category
+                        for entry in criteria_average_Scores:
+                            category = entry['category']
+                            score = entry['score']
+
+                            if category not in category_averages:
+                                category_averages[category] = {'total_score': 0, 'count': 0}
+
+                            category_averages[category]['total_score'] += score
+                            category_averages[category]['count'] += 1
+
+                        # Calculate averages for each category
+                        total_average_score = 0
+                        len = 0
+                        for category, data in category_averages.items():
+                            average_score = data['total_score'] / data['count'] if data['count'] > 0 else 0
+                            category_average_scores.append({category : average_score})
+                            total_average_score += average_score
+                            len +=1
+                            print(f'Category: {category}, Average Score: {average_score}')
+                        if (len > 0):
+                            total_average_score /= len
+                        # Accumulate the average score for the category
+                        if(total_average_score > 0 ):
+                            context.append({'category_average_scores':category_average_scores  , 
+                                'title':course_instructor.Instructors.Title,
+                                'first_name':course_instructor.Instructors.FirstName,
+                                'last_name':course_instructor.Instructors.LastName , 
+                                'course':evaluation.Course_id.CourseName + "( " +evaluation.Course_id.Course_id + " )" ,
+                                'total_score':round(total_average_score, 2),
+                            } )
+                details = {
+                    'term':term,
+                    'evaluator':evaluator,
+                    'desired_order':desired_order,
+                    'department':department,
+                    'coursetype':course_type,
+                }
+                return generate_excel(request , context, details )
+            else:
+                    messages.error(request, 'No result found!')
+                    terms = Term.objects.all()
+                    form = GeneralReportForm(initial={'course_type': query.get('course_type') , 
+                                                    'evaluator': query.get('evaluator') ,
+                                                    'term': query.get('term')})
+                    print('result not found ' , query)
+                    context = {'form':form , 'active_page': 'general_report' , 'terms':terms , 'query':query }
+                    return render(request, 'academichead/evaluationreportpage.html' , context )  
+    else:
+        terms = Term.objects.all()
+        form = GeneralReportForm
+        context = {'form':form , 'active_page': 'general_report' , 'terms':terms}
+        return render(request, 'academichead/evaluationreportpage.html' , context )     
+
+def generate_excel(request, context, details):
+    # Extract details from the dictionary
+    term = details.get('term', '')
+    evaluator = details.get('evaluator', '')
+    desired_order = details.get('desired_order', [])
+    department = details.get('department', '')
+    course_type = details.get('coursetype', '')
+
+    # Create a new workbook and add a worksheet
+    workbook = Workbook()
+    worksheet = workbook.active
+
+    # Write term, evaluator, department, and course type to the worksheet
+    worksheet['A1'] = 'Term:'
+    worksheet['B1'] = str(term)
+    worksheet['A2'] = 'Evaluator:'
+    worksheet['B2'] = evaluator
+    worksheet['A3'] = 'Department:'
+    worksheet['B3'] = department
+    worksheet['A4'] = 'Course Type:'
+    worksheet['B4'] = course_type
+    worksheet['A6'] = 'Title'
+    worksheet['B6'] = 'First Name'
+    worksheet['C6'] = 'Last Name'
+    worksheet['D6'] = 'Course'
+    # worksheet['E6'] = 'Total Score:'
+
+    #  #  # # Write header columns based on desired_order
+    # for col_num, header in enumerate(desired_order, start=1):
+    #     cell = worksheet.cell(row=6, column=col_num+4, value=header)
+    print("lenght of context is " , len(context))
+    for i in range(len(context)):
+        # Extract data from the context
+        data = context[i].get('category_average_scores', [])
+        data = sorted(data, key=lambda x: desired_order.index(list(x.keys())[0]))
+        title = context[i].get('title', '')
+        first_name = context[i].get('first_name', '')
+        last_name = context[i].get('last_name', '')
+        course = context[i].get('course', '')
+        total_score = context[i].get('total_score', 0)
+        # Write instructor information to the worksheet
+        worksheet['A'+str(7+i)] = title
+        worksheet['B'+str(7+i)] = first_name
+        worksheet['C'+str(7+i)] = last_name
+        worksheet['D'+str(7+i)] = course
+        # worksheet['E7'] = total_score
+        print("data is looking ", data)
+
+        # # Write data rows based on category_average_scores
+        for col_num, category_data in enumerate(data, start=1):
+            category = list(category_data.keys())[0]  # Extract the category from the dictionary
+            average_score = list(category_data.values())[0]  # Extract the average score from the dictionary
+            print("category" , category)
+            print("average_score" , average_score)
+            # Write category and average score to the worksheet
+            worksheet.cell(row=6+i, column=col_num+4 , value=category)
+            worksheet.cell(row=7+i, column=col_num+4 , value=average_score)
+            worksheet.cell(row=6+i, column = 5 + len(desired_order) , value="Total Score")
+            worksheet.cell(row=7+i, column = 5 + len(desired_order) , value=total_score)
+        
+    
+    # Create a response with the appropriate content type
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename={term}_{evaluator}_evaluation_report.xlsx'
+
+    # Save the workbook to the response
+    workbook.save(response)
+
+    return response
+
+

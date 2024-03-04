@@ -19,7 +19,7 @@
       {% endfor %}
   
         <h3 class="fw-normal mb-4" style="color: rgb(19, 92, 230)">Generate Report</h3>    
-        <form method="POST" action="{% url 'general_evaluation_report' 'download' %}" class="row g-3 justify-content-center">
+        <form method="POST" action="{% url 'generate_total_report_excel' %}" class="row g-3 justify-content-center">
         {% csrf_token %}
         <div class="mb-3">
           <div class="form-floating">
@@ -51,6 +51,13 @@
             <div class="form-floating">
               {% render_field form.course_type id="course_type" class="form-control" placeholder="CourseType" name="course_type"  %}
               <label for="floatingPassword">CourseType</label>
+           </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="form-floating">
+              {% render_field form.department id="department" class="form-control" placeholder="Department" name="department" %}
+              <label for="floatingPassword">Department</label>
            </div>
           </div>
 

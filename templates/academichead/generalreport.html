@@ -1,8 +1,13 @@
 {% load static %}
+{% load dict_lookup %}
 {% if sender == 'totalreport' %}
 <div style="text-align: center;">
     <h1 style="margin-bottom: 1em;">{{ evaluator }} {{ course_type }} Instructors Evaluation Report {% if term %}({{ term }}){% endif %}</h1>
-    <h2>Here is the average result of all instructors' evaluation results:</h2>
+    {% if department == "Common Course" %}
+    <h2>Here is the average result of all instructors' evaluation results for {{department}} </h2>
+    {% else %}
+    <h2>Here is the average result of all instructors' evaluation results in {{department}} Department</h2>
+    {% endif %}
 </div>
 {% elif sender == 'instructorreport' %}
     <div style="text-align: center;">
@@ -32,14 +37,14 @@
             {% for section in criteria_sections %}
             <tr>
                 <td class="bg text-white font-weight-bold text-center"
-                    style="background-color: rgb(75, 130, 233); text-align: center;"> <h2> {{ section }} </h2></td>
+                    style="background-color: rgb(75, 130, 233); text-align: center;"> <h2> {{ section }} ( {{ category_average_scores|dict_lookup:section }} / 5.0 ) </h2></td>
                 <td class="bg text-white font-weight-bold text-center"
                 style="background-color: rgb(75, 130, 233);">&nbsp;</td>
             </tr>
             {% for criteria_score in criteria_average_Scores %}
             {% if criteria_score.category == section %}
             <tr>
-                <td class="text-center" style="background-color: rgb(181, 206, 253); border-right: 1px solid #fff; text-align: center;">
+                <td class="text-center" style="background-color: rgb(181, 206, 253); border-right: 1px solid #fff; text-align: left;margin-left:5px ;">
                     <h2 style="font-weight: normal;">{{ criteria_score.criteria }}</h2>
                 </td>
             <td class="text-center" style="background-color: rgb(181, 206, 253); text-align: center;"><h2 style="font-weight: normal;">{{ criteria_score.score }}</h2></td>

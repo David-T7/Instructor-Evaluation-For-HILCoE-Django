@@ -53,63 +53,71 @@
                 <td style="background-color: rgba(255, 0, 0, 0.2);">{{ criteria.description }}</td>
                 <td class="score-column" style="background-color: rgba(255, 0, 0, 0.2);;">
                 {% else %}
-                <td style="background-color:rgb(181, 206, 253);">{{ criteria.description }}</td>
+                <td style="background-color:rgb(181, 206, 253); text-align: left;">{{ criteria.description }}</td>
                 <td class="score-column" style="background-color:rgb(181, 206, 253);">
                 {% endif %} 
                 {% endwith %}
                
-                  <div class="form-check form-check-inline">
-                    {% with criteriaid=criteria.Criteria_id|slugify %}
-                    {% if criteria_results|dict_lookup:criteriaid == 'Excellent' %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="excellent_{{ criteria.Criteria_id }}" value="Excellent" checked>
-                    {% else %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="excellent_{{ criteria.Criteria_id }}" value="Excellent" >
-                    {% endif %}
-                    {% endwith %}
-                    <label class="form-check-label" for="excellent_{{ criteria.id }}">Excellent</label>
-  
+                <div class="form-check form-check-inline d-flex flex-column flex-md-row flex-wrap">
+                  {% with criteriaid=criteria.Criteria_id|slugify %}
+                      <!-- Repeat this block for each option (Excellent, Very Good, etc.) -->
+                      <div class="form-check mx-2 my-1">
+                          {% if criteria_results|dict_lookup:criteriaid == 'Excellent' %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="excellent_{{ criteria.Criteria_id }}" value="Excellent" checked>
+                          {% else %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="excellent_{{ criteria.Criteria_id }}" value="Excellent">
+                          {% endif %}
+                          <label class="form-check-label" for="excellent_{{ criteria.id }}">Excellent</label>
+                      </div>
+                      <!-- End of the block -->
+                  {% endwith %}
+              
+                  <div class="form-check mx-2 my-1">
+                      {% with criteriaid=criteria.Criteria_id|slugify %}
+                          {% if criteria_results|dict_lookup:criteriaid == 'Very Good' %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_good_{{ criteria.Criteria_id }}" value="Very Good" checked>
+                          {% else %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_good_{{ criteria.Criteria_id }}" value="Very Good">
+                          {% endif %}
+                          <label class="form-check-label" for="very_good_{{ criteria.id }}">Very Good</label>
+                      {% endwith %}
                   </div>
-                  <div class="form-check form-check-inline">
-                    {% with criteriaid=criteria.Criteria_id|slugify %}
-                    {% if criteria_results|dict_lookup:criteriaid == 'Very Good' %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_good_{{ criteria.Criteria_id }}" value="Very Good" checked>
-                    {% else %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_good_{{ criteria.Criteria_id }}" value="Very Good">
-                    {% endif %}
-                    {% endwith %}
-                    <label class="form-check-label" for="very_good_{{ criteria.id }}">Very Good</label>
+              
+                  <div class="form-check mx-2 my-1">
+                      {% with criteriaid=criteria.Criteria_id|slugify %}
+                          {% if criteria_results|dict_lookup:criteriaid == 'Good' %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="good_{{ criteria.Criteria_id }}" value="Good" checked>
+                          {% else %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="good_{{ criteria.Criteria_id }}" value="Good">
+                          {% endif %}
+                          <label class="form-check-label" for="good_{{ criteria.id }}">Good</label>
+                      {% endwith %}
                   </div>
-                  <div class="form-check form-check-inline">
-                    {% with criteriaid=criteria.Criteria_id|slugify %}
-                    {% if criteria_results|dict_lookup:criteriaid == 'Good' %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="good_{{ criteria.Criteria_id }}" value="Good" checked>
-                    {% else %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="good_{{ criteria.Criteria_id }}" value="Good">
-                    {% endif %}
-                    {% endwith %}
-                    <label class="form-check-label" for="good_{{ criteria.id }}">Good</label>
+              
+                  <div class="form-check mx-2 my-1">
+                      {% with criteriaid=criteria.Criteria_id|slugify %}
+                          {% if criteria_results|dict_lookup:criteriaid == 'Poor' %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="poor_{{ criteria.Criteria_id }}" value="Poor" checked>
+                          {% else %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="poor_{{ criteria.Criteria_id }}" value="Poor">
+                          {% endif %}
+                          <label class="form-check-label" for="poor_{{ criteria.id }}">Poor</label>
+                      {% endwith %}
                   </div>
-                  <div class="form-check form-check-inline">
-                    {% with criteriaid=criteria.Criteria_id|slugify %}
-                    {% if criteria_results|dict_lookup:criteriaid == 'Poor' %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="poor_{{ criteria.Criteria_id }}" value="Poor" checked>
-                    {% else %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="poor_{{ criteria.Criteria_id }}" value="Poor">
-                    {% endif %}
-                    {% endwith %}
-                    <label class="form-check-label" for="poor_{{ criteria.id }}">Poor</label>
+              
+                  <div class="form-check mx-2 my-1">
+                      {% with criteriaid=criteria.Criteria_id|slugify %}
+                          {% if criteria_results|dict_lookup:criteriaid == 'Very Poor' %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_poor_{{ criteria.Criteria_id }}" value="Very Poor" checked>
+                          {% else %}
+                              <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_poor_{{ criteria.Criteria_id }}" value="Very Poor">
+                          {% endif %}
+                          <label class="form-check-label" for="very_poor_{{ criteria.id }}">Very Poor</label>
+                      {% endwith %}
                   </div>
-                  <div class="form-check form-check-inline">
-                    {% with criteriaid=criteria.Criteria_id|slugify %}
-                    {% if criteria_results|dict_lookup:criteriaid == 'Very Poor' %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_poor_{{ criteria.Criteria_id }}" value="Very Poor" checked>
-                    {% else %}
-                    <input class="form-check-input" type="radio" name="criteria_{{ criteria.Criteria_id }}" id="very_poor_{{ criteria.Criteria_id }}" value="Very Poor">
-                    {% endif %}
-                    {% endwith %}
-                    <label class="form-check-label" for="very_poor_{{ criteria.id }}">Very Poor</label>
-                  
-                  </div>
+              </div>
+              
+              
                 
                   <!-- Add similar code for the other options -->
                 </td>

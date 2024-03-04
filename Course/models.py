@@ -21,6 +21,13 @@ coursetype = [
     ('Lab', 'Lab'),
 ]
 
+department = [
+    ( None, 'Select Department'),
+    ('Computer Science', 'Computer Science'),
+    ('Software Engineering', 'Software Engineering'),
+    ('Common Course', 'Common Course'),
+]
+
 season_choices = [("Spring", "Spring"), ("Summer", "Summer"), ("Fall", "Fall"), ("Winter", "Winter")]
 
 def validate_not_empty(value):
@@ -35,8 +42,9 @@ class Batch(models.Model):
 # Create your models here.
 class Course(models.Model):
     Course_id =  models.CharField(max_length=20 , unique=True,primary_key=True)
-    CourseName = models.CharField(max_length=20 , null=True , blank=True)
+    CourseName = models.CharField(max_length=50 , null=True , blank=True)
     CreditHour = models.IntegerField(null=True , blank=True , validators=[MinValueValidator(1)])
+    Department = models.CharField(max_length=20 , null=True ,  choices=department , blank=True)
     def __str__(self):
         return str(self.Course_id + '(' + self.CourseName +')')
 
@@ -45,7 +53,6 @@ class CourseInstructor(models.Model):
     Course = models.ForeignKey(Course, on_delete=models.CASCADE)
     CourseType = models.CharField(max_length=10 , null=True ,  choices=coursetype , blank=True)
     Batch = models.ForeignKey(Batch , on_delete=models.CASCADE ,null=True , blank=True)
-    Department = models.CharField(max_length=10 , null=True ,   choices=departmentchoice , blank=True)
     def __str__(self):
         return str(self.Course.CourseName + '(' + self.CourseType + ') :-' + self.Instructors.FirstName  + ' ' +self.Instructors.LastName )
     
