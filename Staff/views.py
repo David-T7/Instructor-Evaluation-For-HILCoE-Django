@@ -435,7 +435,7 @@ def generate_total_report_excel(request):
             for evaluation in evaluations:
                 if evaluation.Course_id not in courses and evaluation.Course_id.Department == department:
                     courses.append(evaluation.Course_id)
-            if evaluations:    
+            if evaluations and courses:    
                 for course_instructor in course_instructors:
                         criteria_average_details = []
                         criteria = []
