@@ -496,6 +496,7 @@ def total_evaluation_reports_from_query(request , query , details):
     courses = []
     print("deitals file is " , details)
     department = details['department']
+    course_type = details['course_type']
     term = details['term']
     generate_excel_file  = details['generate_excel_file']
     for evaluations in evaluation_result_list:
@@ -507,8 +508,13 @@ def total_evaluation_reports_from_query(request , query , details):
                     if evaluation.Course_id not in courses:
                         courses.append(evaluation.Course_id)
                          
-    instructor_data = []            
-    for course_type in ['Lecture', 'Lab']:
+    instructor_data = []
+    course_type_list = []
+    if  course_type:
+        course_type_list.append(course_type)
+    else:
+        course_type_list = ['Lecture', 'Lab']
+    for course_type in course_type_list:
         for course in courses:
             total_avg_score = 0
             instructor = None

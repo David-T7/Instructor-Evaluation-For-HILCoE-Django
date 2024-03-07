@@ -398,11 +398,15 @@ def generate_total_report_excel(request):
                 evaluator = 'both'
             if query['course_type']:
                 course_type = query['course_type']
+            else:
+                course_type = None
             if query['department']:
                 department = query['department']
+            else:
+                department = None
             if evaluator == 'Total':
                     print("evaluator is total before preceeding.....")
-                    details = {"department":department , "term":term , "generate_excel_file":True}
+                    details = {"department":department , "term":term , "generate_excel_file":True , 'course_type':course_type}
                     return total_evaluation_reports_from_query(request , query_params ,details )
             print('form cleaned data is ' , query.items())
   
