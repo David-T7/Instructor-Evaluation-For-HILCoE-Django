@@ -461,7 +461,7 @@ def generate_excel(request, context):
         first_name = instructor.FirstName
         last_name = instructor.LastName
         course_name = instructor_data[i].get('course_name', '')
-        course_id = instructor_data[i].get('course_name', '')
+        course_id = instructor_data[i].get('course_id', '')
         course_type = instructor_data[i].get('course_type', '')
         average_score = instructor_data[i].get('average_score', 0)
         # Write instructor information to the worksheet
