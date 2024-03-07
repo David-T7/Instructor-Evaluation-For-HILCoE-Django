@@ -2,7 +2,7 @@ from . import views
 from django.urls import path 
 from .views import  evaluate_course, moreStudentEvaluationDetails, search_evaluation, student_evaluation_reports, studenthomepage , Studnets ,Register, student_evaluate_page , total_evaluation_reports, viewpdf
 urlpatterns = [
-# path('register',Register , name='register'),
+path('register',Register , name='register'),
 path('student/', Studnets, name='studnet'),
 path('studenthomepage', studenthomepage , name='studenthomepage'),
 path('evaluate' , student_evaluate_page , name='evaluate'),
