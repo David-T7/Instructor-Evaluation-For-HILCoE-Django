@@ -444,9 +444,10 @@ def generate_excel(request, context):
     worksheet['A6'] = 'Title'
     worksheet['B6'] = 'First Name'
     worksheet['C6'] = 'Last Name'
-    worksheet['D6'] = 'Course'    
-    worksheet['E6'] = 'Course Type'
-    worksheet['F6'] = 'Total Score'
+    worksheet['D6'] = 'CourseName'
+    worksheet['E6'] = 'CourseID'
+    worksheet['F6'] = 'Course Type'
+    worksheet['G6'] = 'Total Score'
 
 
      #  # # Write header columns based on desired_order
@@ -459,16 +460,18 @@ def generate_excel(request, context):
         title = instructor.Title
         first_name = instructor.FirstName
         last_name = instructor.LastName
-        course = instructor_data[i].get('course', '')
+        course_name = instructor_data[i].get('course_name', '')
+        course_id = instructor_data[i].get('course_name', '')
         course_type = instructor_data[i].get('course_type', '')
         average_score = instructor_data[i].get('average_score', 0)
         # Write instructor information to the worksheet
         worksheet['A'+str(7+i)] = title
         worksheet['B'+str(7+i)] = first_name
         worksheet['C'+str(7+i)] = last_name
-        worksheet['D'+str(7+i)] = course
-        worksheet['E'+str(7+i)] = course_type
-        worksheet['F'+str(7+i)] = average_score
+        worksheet['D'+str(7+i)] = course_name
+        worksheet['E'+str(7+i)] = course_id
+        worksheet['F'+str(7+i)] = course_type
+        worksheet['G'+str(7+i)] = average_score
 
     
     # Create a response with the appropriate content type
@@ -551,7 +554,8 @@ def total_evaluation_reports_from_query(request , query , details):
                 total_avg_score/=evaluations.__len__()
                 instructor_data.append({
                         'instructor': instructor,
-                        'course': course.CourseName + "( " + course.Course_id + " )",
+                        'course_name': course.CourseName, 
+                        'course_id':course.Course_id , 
                         'course_type': course_type,
                         'average_score': (total_avg_score).__round__(2),
                         })
@@ -774,13 +778,22 @@ def search_evaluation(request):
             for field_name, value in query.items():
                 if value and field_name in query_dic:
                     if field_name == 'course':
-                        value_object = Course.objects.get(Course_id = value.split('(')[0])
+                        try:
+                            value_object = Course.objects.get(Course_id = value.split('(')[0])
+                        except:
+                            value_object = None
                     elif field_name == 'term':
-                        value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1])
-                        if value_object:
-                            term = value_object
+                        try:
+                            value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1])
+                            if value_object:
+                                term = value_object
+                        except:
+                            value_object = None
                     elif field_name == 'instructor':
-                        value_object = Instructor.objects.get(FirstName = value.split()[0] , LastName = value.split()[1] )
+                        try:
+                            value_object = Instructor.objects.get(FirstName = value.split()[0] , LastName = value.split()[1] )
+                        except:
+                            value_object = None
                     query_params[query_dic[f"{field_name}"]] = value_object
                     print("field name is",field_name , value)
             

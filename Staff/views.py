@@ -374,13 +374,22 @@ def generate_total_report_excel(request):
             for field_name, value in query.items():
                 if value and field_name in query_dic:
                     if field_name == 'course':
-                        value_object = Course.objects.get(Course_id = value.split('(')[0])
+                        try:
+                            value_object = Course.objects.get(Course_id = value.split('(')[0])
+                        except:
+                            value_object = None
                     elif field_name == 'term':
-                        value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1])
-                        if value_object:
-                            term = value_object
+                        try:
+                            value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1])
+                            if value_object:
+                                term = value_object
+                        except:
+                            value_object = None
                     elif field_name == 'instructor':
-                        value_object = Instructor.objects.get(FirstName = value.split()[0] , LastName = value.split()[1] )
+                        try:
+                            value_object = Instructor.objects.get(FirstName = value.split()[0] , LastName = value.split()[1] )
+                        except:
+                            value_object =None
                     query_params[query_dic[f"{field_name}"]] = value_object
                     print("field name is",field_name , value)
             if query['evaluator']:
@@ -509,7 +518,8 @@ def generate_total_report_excel(request):
                                 'title':course_instructor.Instructors.Title,
                                 'first_name':course_instructor.Instructors.FirstName,
                                 'last_name':course_instructor.Instructors.LastName , 
-                                'course':evaluation.Course_id.CourseName + "( " +evaluation.Course_id.Course_id + " )" ,
+                                'course_name':evaluation.Course_id.CourseName  ,
+                                'course_id':evaluation.Course_id.Course_id , 
                                 'total_score':round(total_average_score, 2),
                             } )
                 details = {
@@ -559,7 +569,8 @@ def generate_excel(request, context, details):
     worksheet['A6'] = 'Title'
     worksheet['B6'] = 'First Name'
     worksheet['C6'] = 'Last Name'
-    worksheet['D6'] = 'Course'
+    worksheet['D6'] = 'CourseName'
+    worksheet['E6'] = 'CourseID'
     # worksheet['E6'] = 'Total Score:'
 
     #  #  # # Write header columns based on desired_order
@@ -573,13 +584,15 @@ def generate_excel(request, context, details):
         title = context[i].get('title', '')
         first_name = context[i].get('first_name', '')
         last_name = context[i].get('last_name', '')
-        course = context[i].get('course', '')
+        course_name = context[i].get('course_name', '')
+        course_id = context[i].get('course_id', '')
         total_score = context[i].get('total_score', 0)
         # Write instructor information to the worksheet
         worksheet['A'+str(7+i)] = title
         worksheet['B'+str(7+i)] = first_name
         worksheet['C'+str(7+i)] = last_name
-        worksheet['D'+str(7+i)] = course
+        worksheet['D'+str(7+i)] = course_name
+        worksheet['E'+str(7+i)] = course_id
         # worksheet['E7'] = total_score
         print("data is looking ", data)
 
@@ -590,10 +603,10 @@ def generate_excel(request, context, details):
             print("category" , category)
             print("average_score" , average_score)
             # Write category and average score to the worksheet
-            worksheet.cell(row=6+i, column=col_num+4 , value=category)
-            worksheet.cell(row=7+i, column=col_num+4 , value=average_score)
-            worksheet.cell(row=6+i, column = 5 + len(desired_order) , value="Total Score")
-            worksheet.cell(row=7+i, column = 5 + len(desired_order) , value=total_score)
+            worksheet.cell(row=6+i, column=col_num+5 , value=category)
+            worksheet.cell(row=7+i, column=col_num+5 , value=average_score)
+            worksheet.cell(row=6+i, column = 6 + len(desired_order) , value="Total Score")
+            worksheet.cell(row=7+i, column = 6 + len(desired_order) , value=total_score)
         
     
     # Create a response with the appropriate content type
