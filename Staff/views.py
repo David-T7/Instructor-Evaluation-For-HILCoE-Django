@@ -405,13 +405,6 @@ def generate_total_report_excel(request):
                     details = {"department":department , "term":term , "generate_excel_file":True}
                     return total_evaluation_reports_from_query(request , query_params ,details )
             print('form cleaned data is ' , query.items())
-            # Check each form field and add it to the query_params if it's not empty
-            for field_name, value in query.items():
-                if value and field_name in query_dic:
-                    if field_name == 'term':
-                        value_object = Term.objects.get(Season = value.split()[0] ,Year=value.split()[1]) 
-                        if value_object:
-                            term = value_object    
   
             desired_order = []
             
