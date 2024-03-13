@@ -22,7 +22,7 @@ coursetype = [
 ]
 
 department = [
-    ( None, 'Select Department'),
+    ( None, '-----------------------'),
     ('Computer Science', 'Computer Science'),
     ('Software Engineering', 'Software Engineering'),
     ('Common Course', 'Common Course'),

@@ -6,18 +6,17 @@ from Instructor.models import Instructor
 from Course.models import Batch
 
      
+
 departmentchoice = [
-    ( None, 'SelectDepartment'),
-    ('CS', 'CS'),
-    ('SE', 'SE'),
-    ('Both' , 'Both')
-]
+    ( None, 'Select Department'),
+    ('Computer Science', 'Computer Science'),
+    ('Software Engineering', 'Software Engineering'), ]
 
 # Create your models here.
 class Student(models.Model):
     Student_id =  models.CharField(max_length=20 , unique=True,
                           primary_key=True)
-    Account_id = models.OneToOneField(Account , on_delete=models.CASCADE ,null=True , blank=True)
+    Account_id = models.OneToOneField(Account , on_delete=models.CASCADE , null=True , blank=True)
     Department = models.CharField(max_length=20 , choices=departmentchoice , null=True , blank=True)
     Batch = models.ForeignKey(Batch , on_delete=models.CASCADE ,null=True , blank=True)
     class Meta:

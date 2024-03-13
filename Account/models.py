@@ -3,7 +3,7 @@ from django.db import models
 
 
 rolechoice = [
-    ( None, 'SelectRole'),
+    ( None, 'Select Role'),
     ('Student', 'Student'),
     ('Instructor', 'Instructor'),
     ('StaffMember', 'StaffMember'),
