@@ -55,6 +55,7 @@ def staff_evaluate_page(request):
         evaluation_ended = True
     staff = Staff.objects.get(Account_id=request.user)
     student_enrollments = StudentCourseEnrollment.objects.filter(term=term)
+    courses = []
     staff_evaluation_result = StaffEvaluationResult.objects.filter(Staff_id = staff)
     evaluated_courses_types = []
     evaluated_instructors = {}
@@ -68,24 +69,25 @@ def staff_evaluate_page(request):
             evaluated_instructors[staff_evaluation.Course_id.CourseName+staff_evaluation.CourseType] = eval_list
     courses_data = []
     for enrollment in student_enrollments:
-        instructors_data = []
-        for courseinstructors in CourseInstructor.objects.filter(Course = enrollment.course ):
-            course_instructors.append(courseinstructors)
-            instructor_info = {
+        if enrollment.course not in courses:
+            courses.append(enrollment.course)
+            instructors_data = []
+            for courseinstructors in CourseInstructor.objects.filter(Course = enrollment.course ):
+                course_instructors.append(courseinstructors)
+                instructor_info = {
                 'name': f'{courseinstructors.Instructors.FirstName} {courseinstructors.Instructors.LastName}',
                 'title': courseinstructors.Instructors.Title,
                 'instructor_id':courseinstructors.Instructors.Instructor_id , 
                 'profile_pic': courseinstructors.Instructors.ProfilePic.url if courseinstructors.Instructors.ProfilePic else None,
-            }
-            instructors_data.append(instructor_info)
+                }
 
-        course_data = {
+            course_data = {
             'course_name': enrollment.course.CourseName,
             'course_id':enrollment.course.Course_id,
             'instructors': instructors_data,
             'evaluate_url': f'/evaluate/{enrollment.id}/',  # Replace with the actual URL for evaluation
-        }
-        courses_data.append(course_data)
+            }
+            courses_data.append(course_data)
 
     context = {
         'courses_data': courses_data,
@@ -391,7 +393,7 @@ def generate_total_report_excel(request):
                         except:
                             value_object =None
                     query_params[query_dic[f"{field_name}"]] = value_object
-                    print("field name is",field_name , value)
+                    # print("field name is",field_name , value)
             if query['evaluator']:
                 evaluator = query['evaluator']
             else:
@@ -405,7 +407,7 @@ def generate_total_report_excel(request):
             else:
                 department = None
             if evaluator == 'Total':
-                    print("evaluator is total before preceeding.....")
+                    # print("evaluator is total before preceeding.....")
                     details = {"department":department , "term":term , "generate_excel_file":True , 'course_type':course_type}
                     return total_evaluation_reports_from_query(request , query_params ,details )
             print('form cleaned data is ' , query.items())
@@ -437,7 +439,8 @@ def generate_total_report_excel(request):
             courses = []
             context = []
             course_instructors = CourseInstructor.objects.filter(CourseType = course_type)
-            print("cousre instructor length is " , course_instructors.count)
+            print("course instructors are ", course_instructors)
+            # print("cousre instructor length is " , course_instructors.count)
             for evaluation in evaluations:
                 if evaluation.Course_id not in courses and evaluation.Course_id.Department == department:
                     courses.append(evaluation.Course_id)
@@ -452,7 +455,7 @@ def generate_total_report_excel(request):
                         for evaluation in evaluations:
                             print("in evaluation")
                             if ( evaluation.Course_id in courses and str(evaluation.Instructor_id.Instructor_id) == str(course_instructor.Instructors.Instructor_id) and str(evaluation.Course_id.Course_id) == str(course_instructor.Course.Course_id) ):
-                                print("passed now ")
+                                print("passed now",course_instructor)
                                 for category, sub_dict in evaluation.EvaluationResult.items():
                                     if category not in criteria_sections:criteria_sections.append(category)
                                     average_score = 0
@@ -465,9 +468,10 @@ def generate_total_report_excel(request):
                                             'criteria': criterion,
                                             'score': score,
                                             })
-                        print ('before soring criteria category is ' , criteria_category)
+                        # print ('before soring criteria category is ' , criteria_category)
                         criteria_sections  = sorted(criteria_sections, key=lambda x: desired_order.index(x) if x in desired_order else float('inf'))
-                        print ("criteria dic is " , criteria_category)
+                        # print ("criteria dic is " , criteria_category)
+                        print("category average details before iterations ", criteria_average_details)
                         for  criteria , category in criteria_category.items():
                             average_score = 0
                             len = 0
@@ -483,8 +487,8 @@ def generate_total_report_excel(request):
                                     }
                                         )
                             # Create a dictionary to store accumulated scores and counts for each category
-                            print('criteria category before sorting is ' , criteria_category)
-                            print ('criteria_average_Scores is ' , criteria_average_Scores)
+                            # print('criteria category before sorting is ' , criteria_category)
+                            # print ('criteria_average_Scores is ' , criteria_average_Scores)
                         category_averages = {}
 
                         # Iterate through the list and accumulate scores for each category
@@ -515,8 +519,8 @@ def generate_total_report_excel(request):
                                 'title':course_instructor.Instructors.Title,
                                 'first_name':course_instructor.Instructors.FirstName,
                                 'last_name':course_instructor.Instructors.LastName , 
-                                'course_name':evaluation.Course_id.CourseName  ,
-                                'course_id':evaluation.Course_id.Course_id , 
+                                'course_name':course_instructor.Course.CourseName ,
+                                'course_id':course_instructor.Course.Course_id , 
                                 'total_score':round(total_average_score, 2),
                             } )
                 details = {
@@ -526,6 +530,10 @@ def generate_total_report_excel(request):
                     'department':department,
                     'coursetype':course_type,
                 }
+                print("before generating excel file context file looks like.. ", context)
+                print("courses before generating excel file " , courses)
+                print("evaluation before generating excel file " , evaluations)
+                
                 return generate_excel(request , context, details )
             else:
                     messages.error(request, 'No result found!')
@@ -568,12 +576,15 @@ def generate_excel(request, context, details):
     worksheet['C6'] = 'Last Name'
     worksheet['D6'] = 'CourseName'
     worksheet['E6'] = 'CourseID'
-    # worksheet['E6'] = 'Total Score:'
+    worksheet.cell(row=6, column=6+len(desired_order), value="Total Score")
 
-    #  #  # # Write header columns based on desired_order
-    # for col_num, header in enumerate(desired_order, start=1):
-    #     cell = worksheet.cell(row=6, column=col_num+4, value=header)
-    print("lenght of context is " , len(context))
+
+    # Write header columns based on desired_order
+    for col_num, header in enumerate(desired_order, start=1):
+        worksheet.cell(row=6, column=col_num+5, value=header)
+
+    # Write the category row once
+    category_written = False
     for i in range(len(context)):
         # Extract data from the context
         data = context[i].get('category_average_scores', [])
@@ -584,27 +595,26 @@ def generate_excel(request, context, details):
         course_name = context[i].get('course_name', '')
         course_id = context[i].get('course_id', '')
         total_score = context[i].get('total_score', 0)
+
         # Write instructor information to the worksheet
         worksheet['A'+str(7+i)] = title
         worksheet['B'+str(7+i)] = first_name
         worksheet['C'+str(7+i)] = last_name
         worksheet['D'+str(7+i)] = course_name
         worksheet['E'+str(7+i)] = course_id
-        # worksheet['E7'] = total_score
-        print("data is looking ", data)
+        worksheet.cell(row=7+i, column=6+len(desired_order), value=total_score)
 
-        # # Write data rows based on category_average_scores
+        # Write data rows based on category_average_scores
         for col_num, category_data in enumerate(data, start=1):
             category = list(category_data.keys())[0]  # Extract the category from the dictionary
             average_score = list(category_data.values())[0]  # Extract the average score from the dictionary
-            print("category" , category)
-            print("average_score" , average_score)
+
             # Write category and average score to the worksheet
-            worksheet.cell(row=6+i, column=col_num+5 , value=category)
-            worksheet.cell(row=7+i, column=col_num+5 , value=average_score)
-            worksheet.cell(row=6+i, column = 6 + len(desired_order) , value="Total Score")
-            worksheet.cell(row=7+i, column = 6 + len(desired_order) , value=total_score)
+            if not category_written:  # Write the category row only if it hasn't been written before
+                worksheet.cell(row=6, column=col_num+5, value=category)
+            worksheet.cell(row=7+i, column=col_num+5, value= round(average_score , 2))
         
+        category_written = True  # Set category_written to True after writing the category row once
     
     # Create a response with the appropriate content type
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -614,5 +624,6 @@ def generate_excel(request, context, details):
     workbook.save(response)
 
     return response
+
 
 

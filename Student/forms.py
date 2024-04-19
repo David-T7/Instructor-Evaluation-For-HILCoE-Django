@@ -10,8 +10,6 @@ evaluatorchoice = [
     ( None, '---------'),
     ('Student', 'Student'),
     ('Staff', 'Staff'),
-    ('Both' , 'Both'),
-    ('Total' , 'Total'),
 ]
 
 
@@ -45,7 +43,7 @@ class EvaluationSearchForm(forms.Form):
     Term_id = forms.ModelChoiceField(queryset=Term.objects.all(), required=False)
     Course_id = forms.ModelChoiceField(queryset=Course.objects.all(), required=False)
     Instructor_id = forms.ModelChoiceField(queryset=Instructor.objects.all(), required=False)
-    evaluator = forms.ChoiceField(choices=evaluatorchoice , required=False)
+    evaluator = forms.ChoiceField(choices=evaluatorchoice , required=True)
     department = forms.ChoiceField(choices=department , required=False)
 
 
