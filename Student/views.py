@@ -687,7 +687,7 @@ def moreStudentEvaluationDetails(request , instructor_id , course_id , course_ty
             {
                 'category': category,
                 'criteria': criteria,
-                'score': average_score / len,  
+                'score': (average_score / len).__round__(2),  
             }
         )
     category_averages = {}
@@ -808,7 +808,6 @@ def search_evaluation(request):
             print('query parameters ',query_params)
             if evaluator == 'Student':
                 evaluations = StudentEvaluationResult.objects.filter(Q(**query_params))
-
             elif evaluator == 'Staff':
                 evaluations = StaffEvaluationResult.objects.filter(Q(**query_params))
         courses = Course.objects.all()
@@ -816,98 +815,80 @@ def search_evaluation(request):
         # Prepare a list to store instructor information with average scores
         instructor_data = []
         courses_covered = []
+        current_evaluator= evaluator
+        print("evaluations before startign everything ", evaluations)
         # Iterate through instructors and calculate average scores
-        for course_type in ['Lecture', 'Lab']:
-            for course in courses:
+        courses= []
+        if department:
+            courses  = Course.objects.filter(Department = department)
+        else:
+            courses = Course.objects.all()
+        course_instructors = []
+        for course_instructor in CourseInstructor.objects.all():
+            if (course_instructor.Course in courses):
+                course_instructors.append(course_instructor)
+        print("course instructors ", course_instructors)
+        print("eval list", evaluations)
+        if evaluations and course_instructors:
+            for course_instructor in course_instructors:
                 total_avg_score = 0
+                avg_score = 0
                 instructor = None
-                if evaluations:
-                    for evaluation in evaluations:
-                            if evaluation.Course_id == course and evaluation.Course_id.Course_id+evaluation.CourseType not in courses_covered:
-                                courses_covered.append(evaluation.Course_id.Course_id + evaluation.CourseType)
-                                if department:
-                                    if evaluation.Course_id.Department == department:
-                                        if StudentEvaluationResult.objects.filter(Result_id =evaluation.Result_id):current_evaluator='student'
-                                        else: current_evaluator='staff' 
-                                        if not instructor:
-                                            instructor = evaluation.Instructor_id
-                                        avg_score = 0
-                                        len = 0
-                                        # Extract values from the EvaluationResult JSON field
-                                        for category, sub_dict in evaluation.EvaluationResult.items():
-                                            for criterion, score in sub_dict.items():
-                                                if isinstance(score, (int, float)):
-                                                    len+=1
-                                                    avg_score += score
-                                        avg_score/= len
-                                        total_avg_score += avg_score
-                                        print("average score is " , avg_score)
-                                        # Append instructor information to the list
-                                    if evaluations: total_avg_score /=  evaluations.__len__()
-                                    if evaluation and term:
-                                            instructor_data.append({
-                                        'instructor': instructor,
-                                        'course': course,
-                                        'course_type': course_type,
-                                        'average_score': total_avg_score.__round__(2),
-                                        'current_evaluator':str.title(current_evaluator)
-                                        })
-                                    elif evaluation and not term:
-                                            instructor_data.append({
-                                        'instructor': instructor,
-                                        'course': course,
-                                        'course_type': course_type,
-                                        'average_score': total_avg_score.__round__(2),
-                                        'term':evaluation.Term_id,
-                                        'current_evaluator':str.title(current_evaluator)
-                                        })
-                                else:
-                                    if StudentEvaluationResult.objects.filter(Result_id =evaluation.Result_id):current_evaluator='student'
-                                    else: current_evaluator='staff' 
-                                    instructor = evaluation.Instructor_id
-                                    course = evaluation.Course_id
-                                    course_type = evaluation.CourseType
-                                    avg_score = 0
-                                    len = 0
-                                    # Extract values from the EvaluationResult JSON field
-                                    for category, sub_dict in evaluation.EvaluationResult.items():
-                                        for criterion, score in sub_dict.items():
-                                            if isinstance(score, (int, float)):
-                                                len+=1
-                                                avg_score += score
-                                    avg_score/= len
-                                    print("average score is " , avg_score)
-                                    # Append instructor information to the list
-                                    if evaluation and term:
-                                        instructor_data.append({
-                                    'instructor': instructor,
-                                    'course': course,
-                                    'course_type': course_type,
-                                    'average_score': avg_score.__round__(2),
-                                    'current_evaluator':str.title(current_evaluator)
-                                    })
-                                    elif evaluation and not term:
-                                        instructor_data.append({
-                                    'instructor': instructor,
-                                    'course': course,
-                                    'course_type': course_type,
-                                    'average_score': avg_score.__round__(2),
-                                    'term':evaluation.Term_id,
-                                    'current_evaluator':str.title(current_evaluator)
-                                    })
-                else:
-                    print("evaluation list not found")
-                    messages.error(request, 'No result found!')
-                    form = EvaluationSearchForm(initial={'evaluator': query.get('evaluator') , })
-                    print("in get")
-                    context = {'form':form , 'active_page':'report', 'terms':Term.objects.all() , 
-                            'courses':courses , 'instructors':instructors , 'query':query}
-                    return render(request, 'academichead/evaluation_search.html', context)      
+                eval_len = 0
+                calculated = False
+                for evaluation in evaluations:
+                        if evaluation.Course_id == course_instructor.Course and evaluation.CourseType == course_instructor.CourseType:
+                            print("counter..." , evaluation.CourseType)
+                            eval_len+=1
+                            print("beforee dperamtnente")
+                            instructor = evaluation.Instructor_id
+                            course = evaluation.Course_id
+                            course_type = evaluation.CourseType
+                            avg_score = 0
+                            len = 0
+                            # Extract values from the EvaluationResult JSON field
+                            print("before sub iter ", evaluation.EvaluationResult)
+                            for category, sub_dict in evaluation.EvaluationResult.items():
+                                print("sub dic ", sub_dict)
+                                for criterion, score in sub_dict.items():
+                                        len+=1
+                                        avg_score += score
+                            avg_score/= len
+                            total_avg_score += avg_score
+                            calculated = True
+                            print("average score is " , avg_score)
+                            # Append instructor information to the list
+                if term and calculated :
+                    instructor_data.append({
+                'instructor': instructor,
+                'course':course_instructor.Course,
+                'course_type':course_instructor.CourseType ,
+                'average_score': round(total_avg_score/eval_len , 2),
+                'current_evaluator':str.title(current_evaluator)
+                })   
+                elif  not term and calculated  :
+                    instructor_data.append({
+                'instructor': instructor,
+                'course': course_instructor.Course,
+                'course_type':  course_instructor.CourseType,
+                'average_score':  round(total_avg_score/eval_len ,2) ,
+                'term':evaluation.Term_id,
+                'current_evaluator':str.title(current_evaluator)
+                })
+        else:
+            print("evaluation list not found")
+            messages.error(request, 'No result found!')
+            form = EvaluationSearchForm(initial={'evaluator': query.get('evaluator') , })
+            print("in get")
+            context = {'form':form , 'active_page':'report', 'terms':Term.objects.all() , 
+                    'courses':courses , 'instructors':instructors , 'query':query}
+            return render(request, 'academichead/evaluation_search.html', context)      
 
                 
         context = {'instructor_data': instructor_data , 'active_page':'report', 
                 'evaluator':str.title(evaluator) ,'term':term}
         print("instructor infor ",instructor_data )
+        print("courses coverd ", courses_covered)
         return render(request, 'academichead/evaluation_reports.html', context)
 
     else:
