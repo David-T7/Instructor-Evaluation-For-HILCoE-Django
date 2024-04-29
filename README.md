@@ -36,3 +36,6 @@ python manage.py runserver
 
 http://127.0.0.1:8000/
 ```
+Project Images
+![front page](https://github.com/David-T7/InstructorEvaluationForHILCoE/assets/92254488/3bb1a3f9-9384-4ce5-9d70-c87538cbd265)
+
