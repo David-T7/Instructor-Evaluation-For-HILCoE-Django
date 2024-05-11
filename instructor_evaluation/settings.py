@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-3xzn4z4(ib*b2q*4up)x2ujbdj1yeqn58dw=co!_8ts^r*fu$f'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -76,7 +76,7 @@ MIDDLEWARE = [
 SILENCED_SYSTEM_CHECKS = ['axes.W003']
 AXES_ONLY_ADMIN_SITE = False
 AXES_ONLY_USER_FAILURES = True
-AXES_COOLOFF_TIME = 0.1
+AXES_COOLOFF_TIME = 3
 AXES_LOGIN_ATTEMPT_LIMIT = 5
 AXES_FAILURE_LIMIT = 5
 AXES_RESET_ON_SUCCESS = True

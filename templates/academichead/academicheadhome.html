@@ -24,9 +24,7 @@
                             <div class="card-body text-danger">
                                 <p class="card-text">Evaluation for the term {{ term.Season }} {{ term.Year }} has ended don't forget to check results.
                             </div> 
-                            <div class="col-md-3 mb-4">
-                              <a href="{% url 'general_evaluation_report' 'student' %}" class="btn btn-outline-primary course-btn">Gnerate Report</a>
-                                  </div>
+                                    
                             {% endif %}                          
       <!-- Enrolled Courses Section -->
                        </div>
@@ -34,9 +32,6 @@
                       <br>
               <div class="text-center">
                   <h4 class="card-title">Evaluation results for the term {{term}}</h4>
-                  <div class="card-body text-danger">
-                    <p>Evaluation for the term {{term.Season}} {{term.Year}} has ended!</p>
-                    </div>
                   <div class="d-grid gap-2">
                     <p class="card-text">View reports and summaries of Instructor Evaluations.</p>
                     <div class="row justify-content-center">                      
@@ -47,8 +42,8 @@
                   <a href="{% url 'evaluation_reports' 'staff' %}" class="btn btn-outline-primary course-btn">Staff Evaluations</a>
                       </div>
                       <div class="col-md-3 mb-4">
-                  <a href="{% url 'total_evaluation'  %}" class="btn btn-outline-primary course-btn">Total Evaluations</a>
-                      </div>   
+                        <a href="{% url 'general_evaluation_report' 'student' %}" class="btn btn-outline-primary course-btn">Gnerate Report</a>
+                      </div>
                 </div>
                   </div>
                   {% else %}

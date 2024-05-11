@@ -533,18 +533,11 @@ def total_evaluation_reports_from_query(request , query , details):
                     )
             if(student_evaluations.__len__()>0):evaluations.append(student_evaluations)
             if(staff_evaluations.__len__()>0):evaluations.append(staff_evaluations)
-            print('evaluations are ', evaluations.__len__() , evaluations)
-            
-            current_evaluator = None
+            print('evaluations are ', evaluations.__len__() , evaluations)            
             if (evaluations):
                 for evaluationitem in evaluations:
                     for evaluation in evaluationitem: 
                         if evaluation:
-                            if not current_evaluator:
-                                if StudentEvaluationResult.objects.filter(Result_id =evaluation.Result_id):current_evaluator='student'
-                                else: current_evaluator='staff' 
-                            if not instructor:
-                                instructor = evaluation.Instructor_id
                             avg_score = 0
                             length = 0
                             # Extract values from the EvaluationResult JSON field

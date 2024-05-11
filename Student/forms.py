@@ -17,7 +17,6 @@ general_report_evaluator_choice = [
     ( None, '---------'),
     ('Student', 'Student'),
     ('Staff', 'Staff'),
-    ('Total' , 'Total'),
 ]
 
 coursechoice = [
