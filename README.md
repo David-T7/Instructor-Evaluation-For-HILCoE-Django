@@ -1,42 +1,59 @@
-# Instructor Evaluation System For HILCoE
+# 🎓 Instructor Evaluation System (HILCoE)
 
-## HOW TO RUN THIS PROJECT
-- Install Python(3.11.1) (Dont Forget to Tick Add to Path while installing Python)
-- Download This Project Zip Folder and Extract it
-- Move to project folder in Terminal. Then run following Commands :
+A Django-based web platform built for academic institutions to manage instructor evaluations efficiently.  
+Students can evaluate instructors securely, and the Academic Head can analyze feedback through reports and dashboards.
 
+---
 
-```
-# to insatll requirments 
-pip install -r requirements.txt 
-```
+## 🧭 Overview
 
+This system allows students to log in using institutional credentials, complete instructor evaluation forms, and view their submission history.  
+The Academic Head (admin) can access summarized results and export performance reports in PDF format.
 
-```
+---
 
-# to make migrations 
-python manage.py makemigrations
+## 🛠️ Tech Stack
+
+| Component | Technology |
+|------------|-------------|
+| **Backend** | Django |
+| **Frontend** | HTML, CSS, Bootstrap |
+| **Database** | MySQL (production) / SQLite (local dev) |
+| **Authentication** | Django Auth |
+| **Reporting** | PDF export available only to Academic Head |
+| **Version Control** | Git & GitHub |
+
+---
+
+## ⚙️ Key Features
+
+- 👩‍🎓 Student login with role-based authentication  
+- 🧑‍🏫 Instructor evaluation forms with dynamic questions  
+- 📊 Academic Head dashboard with performance summaries  
+- 🗂 Department and course-level filtering  
+- 🧾 PDF export of evaluation results (Academic Head only)  
+
+---
+
+## 🚀 How to Run Locally
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/David-T7/Instructor-Evaluation-For-HILCoE-Django.git
+cd Instructor-Evaluation-For-HILCoE-Django
+
+# 2. Create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# 3. Install dependencies
+pip install -r requirements.txt
+
+# 4. Run migrations
 python manage.py migrate
-```
-```
-# to create a super user
+
+# 5. Create a superuser (Academic Head)
 python manage.py createsuperuser
-```
-```
-change the static configuration to develpment by commenting the production configuration and uncommenting the development
-which can be done in the settings.py
-```
 
-```
-# to run the project
+# 6. Run the development server
 python manage.py runserver
-```
-```
-- Now enter following URL in Your Browser Installed On Your Pc
-
-http://127.0.0.1:8000/
-
-```
-
-
-  
