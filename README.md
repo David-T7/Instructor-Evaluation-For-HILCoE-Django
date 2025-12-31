@@ -49,11 +49,16 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Run migrations
+# 4. Environment Configuration
+# Create a .env file in the root directory and add:
+# SECRET_KEY=your_secret_key_here
+# DEBUG=True
+
+# 5. Run migrations
 python manage.py migrate
 
-# 5. Create a superuser (Academic Head)
+# 6. Create a superuser (Admin)
 python manage.py createsuperuser
 
-# 6. Run the development server
+# 7. Run the development server
 python manage.py runserver

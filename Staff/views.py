@@ -196,10 +196,10 @@ def academicheadHomePage(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
+    if(term and term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date < timezone.now()): #check if evaluation ended
+    if(term and term.Evaluation_End_Date < timezone.now()): #check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
     context = { 'active_page': 'home', 'term':term , 'evaluation_started':evaluation_started , 'evaluation_ended':evaluation_ended}
@@ -243,7 +243,7 @@ def generalEvaluationReport(request , type):
     course_type = None
     
     if request.method == 'POST':
-        print("in post before evaluting form" , request.POST)
+        # print("in post before evaluting form" , request.POST)
         query = request.POST
         query_dic = {'term':'Term_id'}
         if query:
@@ -257,7 +257,7 @@ def generalEvaluationReport(request , type):
                 course_type = query['course_type']
             if query['department']:
                 department = query['department']
-            print('form cleaned data is ' , query.items())
+            # print('form cleaned data is ' , query.items())
             # Check each form field and add it to the query_params if it's not empty
             for field_name, value in query.items():
                 if value and field_name in query_dic:
@@ -308,9 +308,9 @@ def generalEvaluationReport(request , type):
                                     'criteria': criterion,
                                     'score': score,
                                     })
-                print ('before soring criteria category is ' , criteria_category)
+                # print ('before soring criteria category is ' , criteria_category)
                 criteria_sections  = sorted(criteria_sections, key=lambda x: desired_order.index(x) if x in desired_order else float('inf'))
-                print ("criteria dic is " , criteria_category)
+                # print ("criteria dic is " , criteria_category)
                 for  criteria , category in criteria_category.items():
                     average_score = 0
                     len = 0
@@ -325,8 +325,8 @@ def generalEvaluationReport(request , type):
                                 'score': average_score / len,  
                              }
                                  )
-                    print('criteria category before sorting is ' , criteria_category)
-                    print ('criteria_average_Scores is ' , criteria_average_Scores)               
+                    # print('criteria category before sorting is ' , criteria_category)
+                    # print ('criteria_average_Scores is ' , criteria_average_Scores)               
                 context = {'criteria_average_Scores':criteria_average_Scores  , 
                         'criteria_sections':criteria_sections , 
                         'evaluations':evaluations, 
@@ -340,7 +340,7 @@ def generalEvaluationReport(request , type):
                 if(type == 'view'):    
                     return render (ViewPDF('generalreport.html',context))
                 elif (type == 'download'):
-                    print('downloading')
+                    # print('downloading')
                     return ViewPDF('generalreport.html' , context)
                     # return DownloadPDF('generalreport.html' , context , 'evaluation_report')
             else:
@@ -349,7 +349,7 @@ def generalEvaluationReport(request , type):
                 form = GeneralReportForm(initial={'course_type': query.get('course_type') , 
                                                   'evaluator': query.get('evaluator') ,
                                                   'term': query.get('term')})
-                print('result not found ' , query)
+                # print('result not found ' , query)
                 context = {'form':form , 'active_page': 'general_report' , 'terms':terms , 'query':query }
                 return render(request, 'academichead/evaluationreportpage.html' , context )  
     else:
@@ -366,9 +366,9 @@ def generate_total_report_excel(request):
     evaluator = None
     department = None
     course_type = None
-    print("in generate excel file")
+    # print("in generate excel file")
     if request.method == 'POST':
-        print("in post before evaluting form" , request.POST)
+        # print("in post before evaluting form" , request.POST)
         query = request.POST
         query_dic = {'term':'Term_id'}
         if query:
@@ -410,7 +410,7 @@ def generate_total_report_excel(request):
                     # print("evaluator is total before preceeding.....")
                     details = {"department":department , "term":term , "generate_excel_file":True , 'course_type':course_type}
                     return total_evaluation_reports_from_query(request , query_params ,details )
-            print('form cleaned data is ' , query.items())
+            # print('form cleaned data is ' , query.items())
   
             desired_order = []
             
@@ -439,7 +439,7 @@ def generate_total_report_excel(request):
             courses = []
             context = []
             course_instructors = CourseInstructor.objects.filter(CourseType = course_type)
-            print("course instructors are ", course_instructors)
+            # print("course instructors are ", course_instructors)
             # print("cousre instructor length is " , course_instructors.count)
             for evaluation in evaluations:
                 if evaluation.Course_id not in courses and evaluation.Course_id.Department == department:
@@ -453,9 +453,9 @@ def generate_total_report_excel(request):
                         criteria_average_Scores = []
                         category_average_scores = []
                         for evaluation in evaluations:
-                            print("in evaluation")
+                            # print("in evaluation")
                             if ( evaluation.Course_id in courses and str(evaluation.Instructor_id.Instructor_id) == str(course_instructor.Instructors.Instructor_id) and str(evaluation.Course_id.Course_id) == str(course_instructor.Course.Course_id) ):
-                                print("passed now",course_instructor)
+                                # print("passed now",course_instructor)
                                 for category, sub_dict in evaluation.EvaluationResult.items():
                                     if category not in criteria_sections:criteria_sections.append(category)
                                     average_score = 0
@@ -471,7 +471,7 @@ def generate_total_report_excel(request):
                         # print ('before soring criteria category is ' , criteria_category)
                         criteria_sections  = sorted(criteria_sections, key=lambda x: desired_order.index(x) if x in desired_order else float('inf'))
                         # print ("criteria dic is " , criteria_category)
-                        print("category average details before iterations ", criteria_average_details)
+                        # print("category average details before iterations ", criteria_average_details)
                         for  criteria , category in criteria_category.items():
                             average_score = 0
                             len = 0
@@ -510,7 +510,7 @@ def generate_total_report_excel(request):
                             category_average_scores.append({category : average_score})
                             total_average_score += average_score
                             len +=1
-                            print(f'Category: {category}, Average Score: {average_score}')
+                            # print(f'Category: {category}, Average Score: {average_score}')
                         if (len > 0):
                             total_average_score /= len
                         # Accumulate the average score for the category
@@ -530,9 +530,9 @@ def generate_total_report_excel(request):
                     'department':department,
                     'coursetype':course_type,
                 }
-                print("before generating excel file context file looks like.. ", context)
-                print("courses before generating excel file " , courses)
-                print("evaluation before generating excel file " , evaluations)
+                # print("before generating excel file context file looks like.. ", context)
+                # print("courses before generating excel file " , courses)
+                # print("evaluation before generating excel file " , evaluations)
                 
                 return generate_excel(request , context, details )
             else:
@@ -541,7 +541,7 @@ def generate_total_report_excel(request):
                     form = GeneralReportForm(initial={'course_type': query.get('course_type') , 
                                                     'evaluator': query.get('evaluator') ,
                                                     'term': query.get('term')})
-                    print('result not found ' , query)
+                    # print('result not found ' , query)
                     context = {'form':form , 'active_page': 'general_report' , 'terms':terms , 'query':query }
                     return render(request, 'academichead/evaluationreportpage.html' , context )  
     else:

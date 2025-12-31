@@ -81,15 +81,15 @@ def studenthomepage(request):
     student_enrollments = StudentCourseEnrollment.objects.filter(student=student)
     term = None
     try:
-        term = Term.objects.get(EvaluationDone = False)
+        term = Term.objects.filter(EvaluationDone = False).latest()
     except:
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
+    if(term and term.Evaluation_Start_Date <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date < timezone.now()): # check if evaluation ended
+    if(term and term.Evaluation_End_Date < timezone.now()): # check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
             
@@ -140,10 +140,10 @@ def student_evaluate_page(request):
         term = None
     evaluation_started = False
     evaluation_ended = False
-    if(term.Evaluation_Start_Date  <= timezone.now()): #check if evaluation started
+    if(term and term.Evaluation_Start_Date  <= timezone.now()): #check if evaluation started
         print('evaluation started')
         evaluation_started = True
-    if(term.Evaluation_End_Date   < timezone.now()): #check if evaluation ended
+    if(term and term.Evaluation_End_Date   < timezone.now()): #check if evaluation ended
         print('evaluation ended')
         evaluation_ended = True
     student = Student.objects.get(Account_id=request.user)
