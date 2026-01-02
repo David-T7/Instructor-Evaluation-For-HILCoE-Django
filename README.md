@@ -7,8 +7,8 @@ Students can evaluate instructors securely, and the Academic Head can analyze fe
 
 ## 🧭 Overview
 
-This system allows students to log in using institutional credentials, complete instructor evaluation forms.  
-The Academic Head can access summarized results and export performance reports in PDF format and Excel format.
+This system allows students to log in using institutional credentials and complete instructor evaluation forms.  
+The Academic Head can access summarized results and export performance reports in PDF and Excel formats.
 
 ---
 
@@ -20,7 +20,7 @@ The Academic Head can access summarized results and export performance reports i
 | **Frontend** | HTML, CSS, Bootstrap |
 | **Database** | MySQL (production) / SQLite (local dev) |
 | **Authentication** | Django Auth |
-| **Reporting** | PDF and Excel report available only to Academic Head |
+| **Reporting** | PDF and Excel report generation |
 | **Version Control** | Git & GitHub |
 
 ---
@@ -32,7 +32,7 @@ The Academic Head can access summarized results and export performance reports i
 - 📊 Academic Head dashboard with performance summaries  
 - 🗂 Department and course-level filtering  
 - 🧾 PDF export of evaluation results (Academic Head only)  
-- 🧾 Excel report genaration of evaluation results (Academic Head only).  
+- 🧾 Excel report generation of evaluation results (Academic Head only)
 
 ---
 
@@ -50,16 +50,14 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 # 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. Environment Configuration
-# Create a .env file in the root directory and add:
-# SECRET_KEY=your_secret_key_here
-# DEBUG=True
-
-# 5. Run migrations
+# 4. Run migrations
 python manage.py migrate
 
-# 6. Create a superuser (Admin)
+# 5. Create a superuser (Admin)
 python manage.py createsuperuser
 
-# 7. Run the development server
+# 6. Run the development server
 python manage.py runserver
+
+## 📸 Project Preview
+<img width="959" height="512" alt="Image" src="https://github.com/user-attachments/assets/f42e616c-487a-4f3b-9f0a-698ee803fa20" />
