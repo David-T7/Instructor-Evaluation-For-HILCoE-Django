@@ -32,7 +32,7 @@ The Academic Head can access summarized results and export performance reports i
 - 📊 Academic Head dashboard with performance summaries  
 - 🗂 Department and course-level filtering  
 - 🧾 PDF export of evaluation results (Academic Head only)  
-- 🧾 Excel export of evaluation results (Academic Head only).  
+- 🧾 Excel report genaration of evaluation results (Academic Head only).  
 
 ---
 
