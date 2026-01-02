@@ -1,5 +1,5 @@
-# 🎓 Instructor Evaluation System (HILCoE)
-
+# 🎓 Instructor Evaluation System (HILCoE) 
+# Developed as a final-year graduation project by a team of four members for HiLCoE School of Computer Science and Technology
 A Django-based web platform built for academic institutions to manage instructor evaluations efficiently.  
 Students can evaluate instructors securely, and the Academic Head can analyze feedback through reports.
 
