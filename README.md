@@ -78,3 +78,6 @@ All screenshots are stored in the `screenshots` folder at the root of this repos
 ![Login page](<screenshots/detailed%20student%20evaluation%20result%20pdf%20download.png>)
 ![Login page](<screenshots/Generate%20report%20page.png>)
 ![Login page](<screenshots/excel%20report.png>)
+![Login page](<screenshots/Admin%20Page1.png>)
+![Login page](<screenshots/Admin%20Page2.png>)
+
