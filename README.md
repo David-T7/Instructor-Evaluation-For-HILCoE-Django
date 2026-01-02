@@ -60,4 +60,4 @@ python manage.py createsuperuser
 python manage.py runserver
 
 ## 📸 Project Preview
-<img width="959" height="512" alt="Image" src="https://github.com/user-attachments/assets/f42e616c-487a-4f3b-9f0a-698ee803fa20" />
+<img width="959" height="512" alt="Home page" src="https://github.com/user-attachments/assets/48cf701f-02d8-4b26-9cd2-4d4f93ef874c" />
