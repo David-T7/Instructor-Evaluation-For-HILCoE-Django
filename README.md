@@ -1,3 +1,14 @@
+## Screenshots
+
+All screenshots are stored in the `screenshots` folder at the root of this repository.
+
+![Home page](<screenshots//Home%20page.png>)
+![Login page](<screenshots/login%20page.png>)
+![Home page](<screenshots//student%20home%20page.png>)
+![Login page](<screenshots/evaluation%20page%20for%20students.png>)
+![Login page](<screenshots/evaluation%20page%20for%20students.png>)
+
+
 # 🎓 Instructor Evaluation System (HILCoE)
 
 A Django-based web platform built for academic institutions to manage instructor evaluations efficiently.  
