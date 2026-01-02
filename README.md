@@ -1,14 +1,3 @@
-## Screenshots
-
-All screenshots are stored in the `screenshots` folder at the root of this repository.
-
-![Home page](<screenshots//Home%20page.png>)
-![Login page](<screenshots/login%20page.png>)
-![Home page](<screenshots//student%20home%20page.png>)
-![Login page](<screenshots/evaluation%20page%20for%20students.png>)
-![Login page](<screenshots/evaluation%20page%20for%20students.png>)
-
-
 # 🎓 Instructor Evaluation System (HILCoE)
 
 A Django-based web platform built for academic institutions to manage instructor evaluations efficiently.  
@@ -70,5 +59,22 @@ python manage.py createsuperuser
 # 6. Run the development server
 python manage.py runserver
 
+
+```
 ## 📸 Project Preview
-<img width="959" height="512" alt="Home page" src="https://github.com/user-attachments/assets/48cf701f-02d8-4b26-9cd2-4d4f93ef874c" />
+All screenshots are stored in the `screenshots` folder at the root of this repository.
+
+![Home page](<screenshots//Home%20page.png>)
+![Login page](<screenshots/login%20page.png>)
+![Home page](<screenshots//student%20home%20page.png>)
+![Login page](<screenshots/evaluation%20page%20for%20students.png>)
+![Login page](<screenshots/student%20evaluation%20sample.png>)
+![Login page](<screenshots/student%20evaluation%20sample2.png>)
+![Login page](<screenshots/student%20evaluation%20sample4.png>)
+![Login page](<screenshots/Academic%20Search%20Evaluation.png>)
+![Login page](<screenshots/student%20evaluation%20result%20page.png>)
+![Login page](<screenshots/detailed%20student%20evaluation%20result.png>)
+![Login page](<screenshots/detailed%20student%20evaluation%20result%203.png>)
+![Login page](<screenshots/detailed%20student%20evaluation%20result%20pdf%20download.png>)
+![Login page](<screenshots/Generate%20report%20page.png>)
+![Login page](<screenshots/excel%20report.png>)
