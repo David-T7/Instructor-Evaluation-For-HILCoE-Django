@@ -1,14 +1,14 @@
 # 🎓 Instructor Evaluation System (HILCoE)
 
 A Django-based web platform built for academic institutions to manage instructor evaluations efficiently.  
-Students can evaluate instructors securely, and the Academic Head can analyze feedback through reports and dashboards.
+Students can evaluate instructors securely, and the Academic Head can analyze feedback through reports.
 
 ---
 
 ## 🧭 Overview
 
-This system allows students to log in using institutional credentials, complete instructor evaluation forms, and view their submission history.  
-The Academic Head (admin) can access summarized results and export performance reports in PDF format.
+This system allows students to log in using institutional credentials, complete instructor evaluation forms.  
+The Academic Head can access summarized results and export performance reports in PDF format and Excel format.
 
 ---
 
@@ -20,7 +20,7 @@ The Academic Head (admin) can access summarized results and export performance r
 | **Frontend** | HTML, CSS, Bootstrap |
 | **Database** | MySQL (production) / SQLite (local dev) |
 | **Authentication** | Django Auth |
-| **Reporting** | PDF export available only to Academic Head |
+| **Reporting** | PDF and Excel report available only to Academic Head |
 | **Version Control** | Git & GitHub |
 
 ---
@@ -32,6 +32,7 @@ The Academic Head (admin) can access summarized results and export performance r
 - 📊 Academic Head dashboard with performance summaries  
 - 🗂 Department and course-level filtering  
 - 🧾 PDF export of evaluation results (Academic Head only)  
+- 🧾 Excel report genaration of evaluation results (Academic Head only).  
 
 ---
 
